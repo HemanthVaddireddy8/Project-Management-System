@@ -1,0 +1,9 @@
+﻿@model Dcm.Models.Tree
+
+
+@foreach (var node in Model.RootNode.Children)
+{
+    <ul>
+        <li>@Html.DisplayFor(x => node)</li>
+    </ul>
+}

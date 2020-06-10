@@ -1,0 +1,42 @@
+﻿@model Dcm.Models.Role
+
+<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered " style="padding:0px !important">
+    <thead>
+        <tr>
+            <th style="width:20px">Sil</th>
+            <th style="width:20px">Ad</th>
+            <th style="width:20px">Soyad</th>
+            <th style="width:20px">E-posta</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.roleRelatedUsers != null)
+        {
+            foreach (var item in Model.roleRelatedUsers)
+            {
+                <tr>
+                    <td style="width:20px;text-align:center"><a href="#" onclick="DeleteRoleRelatedUser(@item.id)"><span class='fa fa-times' style='font-size: 18px; color: #E73C3C'></span></a></td>
+                    <td style="width:20px">@item.name</td>
+                    <td style="width:20px">@item.surname</td>
+                    <td style="width:20px">@item.email</td>
+
+                </tr>
+
+            }
+        }
+
+    </tbody>
+</table>
+<div id="spinner" class="spinner" style="display: none; height: 100% !important"></div>
+<script>
+    $(document).ready(function () {
+        if ('@Model.errorMessage' != '') {
+            bootbox.alert('@(Html.Raw(Model.errorMessage))');
+        }
+    });
+
+    
+</script>
+
+

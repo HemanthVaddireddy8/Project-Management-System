@@ -1,0 +1,233 @@
+﻿@model Dcm.Models.RoleAuthorization
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    ViewBag.Title = "Roller";
+}
+
+<link rel='stylesheet' type='text/css' href='~/assets/plugins/datatables/dataTables.css' />
+<link rel='stylesheet' type='text/css' href='~/assets/plugins/codeprettifier/prettify.css' />
+<link rel='stylesheet' type='text/css' href='~/assets/plugins/form-toggle/toggles.css' />
+<link rel='stylesheet' type='text/css' href="~/assets/plugins/jquery-autocomplete/styles.css" rel="stylesheet" />
+@using (Html.BeginForm("RoleAuthorization", "Users", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data", data_validate = "parsley", novalidate = "", id = "validate-form" }))
+{
+    <input type="hidden" name="RecordId" id="RecordId" value="@Model.RecordId" />
+    <input type="hidden" name="MenuId" id="MenuId" value="@Model.MenuId" />
+    <div id='wrap'>
+        <div id="page-heading" style="
+    margin-top: -15px;
+">
+
+            <h3>Roller</h3>
+
+            <div class="options">
+                <div class="btn-toolbar">
+                    <a href="@(Url.Action("ListPage","General")+"?MenuId="+Model.MenuId)" class="btn btn-default"><i class="fa fa-list"></i><span style="padding-left:10px">Listeye Dön</span></a>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="container">
+            <div id="message_div" class="alert alert-info" style="display:none;vertical-align:top">
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary()
+                @ViewBag.ResultMessage
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h4>Detay</h4>
+
+                        </div>
+                        <div class="panel-body">
+
+                            <div class="form-group">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("role_name")</label>
+                                </div>
+
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <input type="text" class="form-control" name="role_name" required="required" id="role_name" value="@Model.role_name" autocomplete="off" placeholder="@Dcm.Source.GlobalHelper.GetGlobalResource("role_name")">
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <p><label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("role_explanation")</label></p>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <p><input type="text" name="role_explanation" id="role_explanation" required="required" value="@Model.role_explanation" class="form-control" autocomplete="off" placeholder="@Dcm.Source.GlobalHelper.GetGlobalResource("role_explanation")"></p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("isactive")</label>
+                                </div>
+                                <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
+                                    <input type="checkbox" id="chk_is_active" name="chk_is_active">
+                                    <input type="hidden" id="is_active" name="is_active">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <p><label class="control-label">Kullanıcılar</label></p>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12  form-validate">
+                                    <p>
+                                        <input id="inputUsers" type="text" name="UserId" class="form-control" title="Kullanıcılar" placeholder="Kullanıcı adını yazmaya başlayın" />
+                                    </p>
+                                    <input id="hdnUserListId" type="hidden" />
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12  form-validate">
+                                    <input type="button" class="btn-default btn" value="Kullanıcı Ekle" onclick="AddUser()">
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12  form-validate">
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <p><label class="control-label">Role Bağlı Kullanıcılar</label></p>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12  form-validate" id="RoleRelatedUsersTable">
+                                    @Html.Partial("RoleRelatedUsers")
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12  form-validate">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-sm-6 col-sm-offset-3">
+                                    <div class="btn-toolbar">
+                                        <input type="submit" class="btn-primary btn" value="Kaydet" onclick="Update()" />
+                                        @*<button class="btn-default btn">Cancel</button>*@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div><!-- container -->
+    </div>
+
+}
+
+<style>
+    .table-bordered > tbody > tr > td {
+        padding: 5px;
+        line-height: 1.428571429;
+        vertical-align: top;
+        border-top: 1px solid #e6e7e8;
+    }
+
+    #wrap > .container {
+        padding: 10px;
+    }
+
+    #wrap {
+        margin-top: 0px;
+    }
+</style>
+<script type='text/javascript' src='~/assets/plugins/datatables/jquery.dataTables.min.js'></script>
+<script type='text/javascript' src='~/assets/plugins/datatables/dataTables.bootstrap.js'></script>
+
+<script>
+    $(document).ready(function () {
+
+        $('.datatables').dataTable({
+            "sDom": "<'row'<'col-xs-6'l><'col-xs-6'f>r>t<'row'<'col-xs-6'i><'col-xs-6'p>>",
+            "sPaginationType": "bootstrap",
+            "aoColumnDefs": [
+                {
+                    bSortable: false,
+                    aTargets: [0],
+                }
+            ],
+
+            "oLanguage": {
+                "sLengthMenu": "_MENU_",
+                "sZeroRecords": "Gösterilecek kayıt bulunamadı.",
+                "sInfo": "( _START_ - _END_ ) / _TOTAL_ kayıt",
+                "sInfoFiltered": "(Toplam _MAX_ kayıt.)",
+                "sInfoEmpty": "Filtrelenen kayıt yok.",
+                "oPaginate": {
+                    "sFirst": "First",
+                    "sLast": "Last",
+                    "sNext": "Sonraki",
+                    "sPrevious": "Önceki"
+                },
+
+            }
+
+        });
+        $('.dataTables_filter input').addClass('form-control').attr('placeholder', 'Ara...');
+        $('.dataTables_length select').addClass('form-control');
+
+        var prevSuggestionValue = "";
+        $('#inputUsers').devbridgeAutocomplete({
+            serviceUrl: '/Users/UserList?type=ALL',
+            onSelect: function (suggestion) {
+                if (prevSuggestionValue == suggestion.value) {
+                    return false;
+                }
+                prevSuggestionValue = suggestion.value;
+
+                $("#hdnUserListId").val(suggestion.data.id);
+                //$("#hdnUserListCategory").val(suggestion.data.category);
+            }
+            //,groupBy: 'category'
+        });
+
+
+        if ('@Model.is_active' == 'True' || '@Model.is_active' == 'true' || '@Model.is_active' == 'TRUE') {
+            $("#chk_is_active").prop('checked', true);
+        }
+
+
+    });
+
+    function Update() {
+        if ($("#chk_is_active").prop('checked') == true) {
+            $("#is_active").val("true");
+        }
+
+        var isValid = $('#validate-form').parsley().validate();
+
+        if (!isValid) {
+            $('#message_div').hide()
+        }
+
+    }
+
+    function AddUser()
+    {
+        urlAPI = "/Users/RoleRelatedUsers?role_id=@Model.RecordId&user_id=" + $("#hdnUserListId").val() + "&input=" + $('#inputUsers').val();
+        getAjax(ajaxType.GET, urlAPI, ajaxDataType.HTML, ajaxAsync.TRUE, ajaxShowProgress.TRUE, callbackAddUser,"");
+    }
+
+    function callbackAddUser(resultHTML)
+    {
+        $("#RoleRelatedUsersTable").html(resultHTML);
+    }
+
+    function DeleteRoleRelatedUser(id)
+    {
+        urlAPI = "/Users/RoleRelatedUsersDelete?role_id=@Model.RecordId&id=" + id ;
+        getAjax(ajaxType.GET, urlAPI, ajaxDataType.HTML, ajaxAsync.TRUE, ajaxShowProgress.TRUE, callbackDeleteUser, "");
+    }
+
+    function callbackDeleteUser(resultHTML) {
+        $("#RoleRelatedUsersTable").html(resultHTML);
+    }
+</script>

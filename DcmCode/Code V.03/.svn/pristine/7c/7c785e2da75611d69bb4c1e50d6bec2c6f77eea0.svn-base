@@ -1,0 +1,580 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Data;
+using System.Collections;
+using System.Globalization;
+using Dcm.EntityModels;
+using Dcm.Models;
+using BaseDB;
+using Dcm.Source;
+using System.IO;
+
+namespace Gunluk.EntityModels
+{
+    public class TaskRepository : BaseDB.BaseRepository<Dcm.EntityModels.TaskEntities>
+    {
+
+        #region Görev İşlemleri
+        public tsk_tasks GetTask(Guid task_id)
+        {
+            return db.tsk_tasks.SingleOrDefault(d => d.task_id == task_id);
+        }
+
+        public List<ref_tsk_task_priority> GetTaskPriorityList()
+        {
+            return db.ref_tsk_task_priority.ToList();
+        }
+
+        public List<ref_tsk_task_status> GetTaskStatusList()
+        {
+            return db.ref_tsk_task_status.ToList();
+        }
+
+
+        public void AddTask(tsk_tasks task, Task model)
+        {
+            task.task_id = Guid.NewGuid();
+
+            if (GlobalHelper.IsGuidOrEmpty(model.assigned_user_id))
+                task.assigned_user_id = Guid.Parse(model.assigned_user_id);
+
+            if (GlobalHelper.IsGuidOrEmpty(model.related_project_id))
+                task.related_project_id = Guid.Parse(model.related_project_id);
+
+            if (GlobalHelper.IsGuidOrEmpty(model.task_user_id))
+                task.task_user_id = Guid.Parse(model.task_user_id);
+
+
+            if (model.end_date != null && model.end_date != DateTime.MinValue && model.end_date.ToString() != "")
+                task.end_date = Convert.ToDateTime(model.end_date);
+
+            if (model.start_date != null && model.start_date != DateTime.MinValue && model.start_date.ToString() != "")
+                task.start_date = Convert.ToDateTime(model.start_date);
+
+            task.task_name = model.task_name;
+            task.task_description = model.task_description;
+            task.task_priority_id = Convert.ToInt32(model.task_priority_id);
+            task.task_status_id = Convert.ToInt32(model.task_status_id);
+            task.is_task_sent = false;
+
+            task.is_active = model.is_active;
+            db.tsk_tasks.Add(task);
+            this.Kaydet();
+
+            this.AddTaskHistory(task);
+        }
+
+        public Task BindTask(Task model, Guid recordId)
+        {
+            tsk_tasks task = new tsk_tasks();
+            task = this.GetTask(recordId);
+
+            model.task_name = task.task_name;
+            model.task_description = task.task_description;
+            model.task_priority_id = task.task_priority_id.ToString();
+            model.task_status_id = task.task_status_id.ToString();
+            model.explanations = task.explanations;
+            model.is_active = task.is_active.Value;
+            model.is_task_sent = task.is_task_sent.Value;
+            
+            if (task.related_project_id != null && GlobalHelper.IsGuidOrEmpty(task.related_project_id.ToString()))
+                model.related_project_id = task.related_project_id.ToString();
+
+            if (task.assigned_user_id != null && GlobalHelper.IsGuidOrEmpty(task.assigned_user_id.ToString()))
+                model.assigned_user_id = task.assigned_user_id.ToString();
+
+            if (task.task_user_id != null && GlobalHelper.IsGuidOrEmpty(task.task_user_id.ToString()))
+                model.task_user_id = task.task_user_id.ToString();
+
+            if (task.end_date != null)
+                model.end_date = task.end_date;
+            else
+                model.end_date = DateTime.MinValue;
+
+            if (task.start_date != null)
+                model.start_date = task.start_date;
+            else
+                model.start_date = DateTime.MinValue;
+
+            model.OrderId = task.order_id;
+
+            return model;
+        }
+
+        public Task UpdateTask(Task model, Guid recordId)
+        {
+            tsk_tasks task = new tsk_tasks();
+            task = this.GetTask(recordId);
+
+            bool statusChanged = false;
+
+            if (Convert.ToInt32(model.task_status_id) != task.task_status_id)
+                statusChanged = true;
+
+            task.task_name = model.task_name;
+            task.task_description = model.task_description;
+            task.task_priority_id = Convert.ToInt32(model.task_priority_id);
+            task.task_status_id = Convert.ToInt32(model.task_status_id);
+
+
+
+            task.is_active = model.is_active;
+
+            if (model.related_project_id != null && GlobalHelper.IsGuidOrEmpty(model.related_project_id))
+                task.related_project_id = Guid.Parse(model.related_project_id);
+
+            if (model.task_user_id != null && GlobalHelper.IsGuidOrEmpty(model.task_user_id))
+                task.task_user_id = Guid.Parse(model.task_user_id);
+
+            if (model.assigned_user_id != null && GlobalHelper.IsGuidOrEmpty(model.assigned_user_id))
+                task.assigned_user_id= Guid.Parse(model.assigned_user_id);
+
+             if (model.end_date != null && model.end_date != DateTime.MinValue && model.end_date.ToString() != "")
+                task.end_date = Convert.ToDateTime(model.end_date);
+
+            if (model.start_date != null && model.start_date != DateTime.MinValue && model.start_date.ToString() != "")
+                task.start_date = Convert.ToDateTime(model.start_date);
+            
+            task.updated_at = DateTime.UtcNow;
+            task.updated_by = SessionContext.Current.ActiveUser.UserUid;
+
+            this.Kaydet();
+
+            if (statusChanged)
+            {
+                this.AddTaskHistory(task);
+
+                GenelRepository gnlDB = RepositoryManager.GetRepository<GenelRepository>();
+
+                #region Notification Ekleniyor
+                
+                if (Convert.ToInt32(model.task_status_id) == (int)Enums.TaskStatus.Gonderildi)
+                {
+                    #region Notification Statu Gönderildi
+                    string title = Resources.GlobalResource.new_task_notification;
+
+                    gnl_users user = gnlDB.GetUser(task.task_user_id);
+                    string nameSurname = "";
+
+                    if (user != null)
+                        nameSurname = user.name + " " + user.surname;
+
+                    DateTime localDateTime = BaseClasses.BaseFunctions.ToLocalTime(DateTime.UtcNow, BaseDB.SessionContext.Current.ActiveUser.TimeZoneInfoUser.Id);
+
+                    string body = string.Format(Resources.GlobalResource.new_task_notification_body, task.task_name, localDateTime, nameSurname);
+
+                    gnlDB.AddNotification(recordId, task.assigned_user_id, (int)Enums.NotificationType.Normal, (int)Enums.NotificationModuleType.Task,title,body);
+                    gnlDB.Kaydet();
+
+                    TaskMailSend(task.assigned_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Durumu Değişikliği","","Gönderildi","1");
+
+                    #endregion
+                }
+                else
+                {
+                    #region Notification Statu Değişikliği
+
+                    if (Convert.ToInt32(model.task_status_id) == (int)Enums.TaskStatus.Calismaya_Baslandi)
+                    {
+                        string title = Resources.GlobalResource.task_status_notification;
+                        DateTime localDateTime = BaseClasses.BaseFunctions.ToLocalTime(DateTime.UtcNow, BaseDB.SessionContext.Current.ActiveUser.TimeZoneInfoUser.Id);
+                        string body = string.Format(Resources.GlobalResource.task_gonderildi_status_notification_body, task.task_name, Resources.GlobalResource.task_status_calismaya_baslandi, localDateTime);
+
+                        gnlDB.AddNotification(recordId, task.assigned_user_id, (int)Enums.NotificationType.Normal, (int)Enums.NotificationModuleType.Task, title, body);
+                        gnlDB.Kaydet();
+
+                        gnlDB.AddNotification(recordId, task.task_user_id, (int)Enums.NotificationType.Normal, (int)Enums.NotificationModuleType.Task, title, body);
+                        gnlDB.Kaydet();
+
+                        if (task.assigned_user_id != task.task_user_id)
+                        {
+                            TaskMailSend(task.assigned_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Durumu Değişikliği","", "Çalışmaya Başlandı","1");
+                            TaskMailSend(task.task_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Durumu Değişikliği", "","Çalışmaya Başlandı","1");
+                        }
+                        else
+                        {
+                            TaskMailSend(task.assigned_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Durumu Değişikliği","", "Çalışmaya Başlandı","1");
+                        }
+                    }
+                    else if (Convert.ToInt32(model.task_status_id) == (int)Enums.TaskStatus.Tamamlandi)
+                    {
+                        string title = Resources.GlobalResource.task_status_notification;
+
+                        DateTime localDateTime = BaseClasses.BaseFunctions.ToLocalTime(DateTime.UtcNow, BaseDB.SessionContext.Current.ActiveUser.TimeZoneInfoUser.Id);
+
+                        string body = string.Format(Resources.GlobalResource.task_gonderildi_status_notification_body, task.task_name, Resources.GlobalResource.task_status_tamamlandi, localDateTime);
+
+                        gnlDB.AddNotification(recordId, task.assigned_user_id, (int)Enums.NotificationType.Normal, (int)Enums.NotificationModuleType.Task, title, body);
+                        gnlDB.Kaydet();
+
+                        gnlDB.AddNotification(recordId, task.task_user_id, (int)Enums.NotificationType.Normal, (int)Enums.NotificationModuleType.Task, title, body);
+                        gnlDB.Kaydet();
+
+                        if (task.assigned_user_id != task.task_user_id)
+                        {
+                            TaskMailSend(task.assigned_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Durumu Değişikliği","", "Tamamlandı","1");
+                            TaskMailSend(task.task_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Durumu Değişikliği","", "Tamamlandı","1");
+                        }
+                        else
+                        {
+                            TaskMailSend(task.assigned_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Durumu Değişikliği", "", "Tamamlandı", "1");
+                        }
+
+                    }
+                    else if (Convert.ToInt32(model.task_status_id) == (int)Enums.TaskStatus.Reddedildi)
+                    {
+                        string title = Resources.GlobalResource.task_status_notification;
+
+                        DateTime localDateTime = BaseClasses.BaseFunctions.ToLocalTime(DateTime.UtcNow, BaseDB.SessionContext.Current.ActiveUser.TimeZoneInfoUser.Id);
+
+                        string body = string.Format(Resources.GlobalResource.task_gonderildi_status_notification_body, task.task_name, Resources.GlobalResource.task_status_reddedildi, localDateTime);
+
+                        gnlDB.AddNotification(recordId, task.assigned_user_id, (int)Enums.NotificationType.Normal, (int)Enums.NotificationModuleType.Task, title, body);
+                        gnlDB.Kaydet();
+
+                        gnlDB.AddNotification(recordId, task.task_user_id, (int)Enums.NotificationType.Normal, (int)Enums.NotificationModuleType.Task, title, body);
+                        gnlDB.Kaydet();
+
+                        if (task.assigned_user_id != task.task_user_id)
+                        {
+                            TaskMailSend(task.assigned_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Durumu Değişikliği", "", "Reddedildi", "1");
+                            TaskMailSend(task.task_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Durumu Değişikliği", "", "Reddedildi", "1");
+                        }
+                        else 
+                        {
+                            TaskMailSend(task.assigned_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Durumu Değişikliği", "", "Reddedildi", "1");
+                        }
+
+                    }
+
+
+                    #endregion
+                }
+                #endregion
+            }
+            return model;
+        }
+
+        public Task UpdateTaskStatus(Task model, Guid recordId, int statusId,bool active=true)
+        {
+            tsk_tasks task = new tsk_tasks();
+            task = this.GetTask(recordId);
+
+            bool statusChanged = false;
+
+            if (statusId != task.task_status_id)
+                statusChanged = true;
+
+            task.task_status_id = statusId;
+            task.is_task_sent = true;
+            task.is_active = active;
+
+            task.updated_at = DateTime.UtcNow;
+            task.updated_by = SessionContext.Current.ActiveUser.UserUid;
+
+            this.Kaydet();
+
+
+            if (statusChanged)
+            {
+                this.AddTaskHistory(task);
+
+                GenelRepository gnlDB = RepositoryManager.GetRepository<GenelRepository>();
+
+                #region Notification Ekleniyor
+
+                if (statusId == (int)Enums.TaskStatus.Gonderildi)
+                {
+                    #region Notification Statu Gönderildi
+                    string title = Resources.GlobalResource.new_task_notification;
+
+                    gnl_users user = gnlDB.GetUser(task.task_user_id);
+                    string nameSurname = "";
+
+                    if (user != null)
+                        nameSurname = user.name + " " + user.surname;
+
+                    DateTime localDateTime = BaseClasses.BaseFunctions.ToLocalTime(DateTime.UtcNow, BaseDB.SessionContext.Current.ActiveUser.TimeZoneInfoUser.Id);
+
+                    string body = string.Format(Resources.GlobalResource.new_task_notification_body, task.task_name, localDateTime, nameSurname);
+
+                    gnlDB.AddNotification(recordId, task.assigned_user_id, (int)Enums.NotificationType.Normal, (int)Enums.NotificationModuleType.Task, title, body);
+                    gnlDB.Kaydet();
+
+                    TaskMailSend(task.assigned_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Durumu Değişikliği", "", "Gönderildi", "1");
+                    #endregion
+                }
+                else if (Convert.ToInt32(model.task_status_id) == (int)Enums.TaskStatus.Gonderildi)
+                {
+                    #region Notification Statu Gönderildi
+                    string title = Resources.GlobalResource.new_task_notification;
+
+                    gnl_users user = gnlDB.GetUser(task.task_user_id);
+                    string nameSurname = "";
+
+                    if (user != null)
+                        nameSurname = user.name + " " + user.surname;
+
+                    DateTime localDateTime = BaseClasses.BaseFunctions.ToLocalTime(DateTime.UtcNow, BaseDB.SessionContext.Current.ActiveUser.TimeZoneInfoUser.Id);
+
+                    string body = string.Format(Resources.GlobalResource.new_task_notification_body, task.task_name, localDateTime, nameSurname);
+
+                    gnlDB.AddNotification(recordId, task.assigned_user_id, (int)Enums.NotificationType.Normal, (int)Enums.NotificationModuleType.Task, title, body);
+                    gnlDB.Kaydet();
+
+                    TaskMailSend(task.assigned_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Durumu Değişikliği", "", "Gönderildi", "1");
+                    #endregion
+                }
+                else
+                {
+                    #region Notification Statu Değişikliği
+
+                    if (Convert.ToInt32(model.task_status_id) == (int)Enums.TaskStatus.Calismaya_Baslandi)
+                    {
+                        string title = Resources.GlobalResource.task_status_notification;
+                        DateTime localDateTime = BaseClasses.BaseFunctions.ToLocalTime(DateTime.UtcNow, BaseDB.SessionContext.Current.ActiveUser.TimeZoneInfoUser.Id);
+                        string body = string.Format(Resources.GlobalResource.task_gonderildi_status_notification_body, task.task_name, Resources.GlobalResource.task_status_calismaya_baslandi, localDateTime);
+
+                        gnlDB.AddNotification(recordId, task.assigned_user_id, (int)Enums.NotificationType.Normal, (int)Enums.NotificationModuleType.Task, title, body);
+                        gnlDB.Kaydet();
+
+                        gnlDB.AddNotification(recordId, task.task_user_id, (int)Enums.NotificationType.Normal, (int)Enums.NotificationModuleType.Task, title, body);
+                        gnlDB.Kaydet();
+
+                        if (task.assigned_user_id != task.task_user_id)
+                        {
+                            TaskMailSend(task.assigned_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Durumu Değişikliği", "", "Çalışmaya Başlandı", "1");
+                            TaskMailSend(task.task_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Durumu Değişikliği", "", "Çalışmaya Başlandı", "1");
+                        }
+                        else
+                        {
+                            TaskMailSend(task.assigned_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Durumu Değişikliği", "", "Çalışmaya Başlandı", "1");
+                        }
+
+                    }
+                    else if (Convert.ToInt32(model.task_status_id) == (int)Enums.TaskStatus.Tamamlandi)
+                    {
+                        string title = Resources.GlobalResource.task_status_notification;
+
+                        DateTime localDateTime = BaseClasses.BaseFunctions.ToLocalTime(DateTime.UtcNow, BaseDB.SessionContext.Current.ActiveUser.TimeZoneInfoUser.Id);
+
+                        string body = string.Format(Resources.GlobalResource.task_gonderildi_status_notification_body, task.task_name, Resources.GlobalResource.task_status_tamamlandi, localDateTime);
+
+                        gnlDB.AddNotification(recordId, task.assigned_user_id, (int)Enums.NotificationType.Normal, (int)Enums.NotificationModuleType.Task, title, body);
+                        gnlDB.Kaydet();
+
+                        gnlDB.AddNotification(recordId, task.task_user_id, (int)Enums.NotificationType.Normal, (int)Enums.NotificationModuleType.Task, title, body);
+                        gnlDB.Kaydet();
+
+                        if (task.assigned_user_id != task.task_user_id)
+                        {
+                            TaskMailSend(task.assigned_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Durumu Değişikliği", "", "Tamamlandı", "1");
+                            TaskMailSend(task.task_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Durumu Değişikliği", "", "Tamamlandı", "1");
+                        }
+                        else
+                        {
+                            TaskMailSend(task.assigned_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Durumu Değişikliği", "", "Tamamlandı", "1");
+                        }
+
+                    }
+                    else if (Convert.ToInt32(model.task_status_id) == (int)Enums.TaskStatus.Reddedildi)
+                    {
+                        string title = Resources.GlobalResource.task_status_notification;
+
+                        DateTime localDateTime = BaseClasses.BaseFunctions.ToLocalTime(DateTime.UtcNow, BaseDB.SessionContext.Current.ActiveUser.TimeZoneInfoUser.Id);
+
+                        string body = string.Format(Resources.GlobalResource.task_gonderildi_status_notification_body, task.task_name, Resources.GlobalResource.task_status_reddedildi, localDateTime);
+
+                        gnlDB.AddNotification(recordId, task.assigned_user_id, (int)Enums.NotificationType.Normal, (int)Enums.NotificationModuleType.Task, title, body);
+                        gnlDB.Kaydet();
+
+                        gnlDB.AddNotification(recordId, task.task_user_id, (int)Enums.NotificationType.Normal, (int)Enums.NotificationModuleType.Task, title, body);
+                        gnlDB.Kaydet();
+
+                        if (task.assigned_user_id != task.task_user_id)
+                        {
+                            TaskMailSend(task.assigned_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Durumu Değişikliği", "", "Reddedildi", "1");
+                            TaskMailSend(task.task_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Durumu Değişikliği", "", "Reddedildi", "1");
+                        }
+                        else
+                        {
+                            TaskMailSend(task.assigned_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Durumu Değişikliği", "", "Reddedildi", "1");
+                        }
+
+                    }
+
+
+                    #endregion
+                }
+                #endregion
+
+            }
+
+
+            return model;
+        }
+
+        public Task UpdateExplanation(Task model, Guid recordId)
+        {
+            tsk_tasks task = new tsk_tasks();
+            task = this.GetTask(recordId);
+
+            DateTime lclDateTime = BaseClasses.BaseFunctions.ToLocalTime(DateTime.UtcNow, BaseDB.SessionContext.Current.ActiveUser.TimeZoneInfoUser.Id);
+
+            if (model.new_explanation!=null && model.new_explanation.Trim() != "")
+                task.explanations = "~~~~ " + SessionContext.Current.ActiveUser.Name + " " + SessionContext.Current.ActiveUser.Surname + "  " + lclDateTime + " ~~~~\n" + model.new_explanation + "\n\r" + task.explanations;
+            
+            this.Kaydet();
+
+            GenelRepository gnlDB = RepositoryManager.GetRepository<GenelRepository>();
+
+            #region Notification Ekleniyor
+            
+            string title = Resources.GlobalResource.task_explanation_added;
+
+            DateTime localDateTime = BaseClasses.BaseFunctions.ToLocalTime(DateTime.UtcNow, BaseDB.SessionContext.Current.ActiveUser.TimeZoneInfoUser.Id);
+
+            string body = string.Format(Resources.GlobalResource.task_explanation_added_body, task.task_name, localDateTime);
+
+            gnlDB.AddNotification(recordId, task.assigned_user_id, (int)Enums.NotificationType.Normal, (int)Enums.NotificationModuleType.Task, title, body);
+            gnlDB.Kaydet();
+
+            gnlDB.AddNotification(recordId, task.task_user_id, (int)Enums.NotificationType.Normal, (int)Enums.NotificationModuleType.Task, title, body);
+            gnlDB.Kaydet();
+
+            if (task.assigned_user_id != task.task_user_id)
+            {
+                TaskMailSend(task.assigned_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Açıklaması eklendi", model.new_explanation, "", "2", SessionContext.Current.ActiveUser.Name + " " + SessionContext.Current.ActiveUser.Surname);
+                TaskMailSend(task.task_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Açıklaması eklendi", model.new_explanation, "", "2", SessionContext.Current.ActiveUser.Name + " " + SessionContext.Current.ActiveUser.Surname);
+            }
+            else
+            {
+                TaskMailSend(task.assigned_user_id, task.order_id.ToString(), task.task_name, task.task_id, "Görev Açıklaması eklendi", model.new_explanation, "", "2", SessionContext.Current.ActiveUser.Name + " " + SessionContext.Current.ActiveUser.Surname);
+            }
+
+
+            #endregion
+
+            return model;
+
+            
+        }
+
+        public Task DeleteTask(Task model, Guid recordId)
+        {
+            tsk_tasks task = new tsk_tasks();
+            task = this.GetTask(recordId);
+
+            task.is_deleted = true;
+            task.is_active = false;
+            task.deleted_at = DateTime.UtcNow;
+            task.deleted_by = SessionContext.Current.ActiveUser.UserUid;
+
+            this.Kaydet();
+            return model;
+        }
+        #endregion
+
+        #region Görev Tarihçesi İşlemleri
+        public tsk_tasks_history GetTaskHistory(int history_id)
+        {
+            return db.tsk_tasks_history.SingleOrDefault(d => d.history_id == history_id);
+        }
+
+        public List<tsk_task_history_v> GetTaskHistoryListByTaskId(Guid task_id)
+        {
+            return db.tsk_task_history_v.Where(x => x.task_id == task_id).OrderBy(x => x.history_id).ToList();
+        }
+
+        public DataSet GetAllTaskChartData()
+        {
+            return BaseDB.DBManager.AppConnection.GetDataSet("select * from tsk_all_task_chart_v"); 
+        }
+
+        public DataSet GetMyTaskChartData()
+        {
+            return BaseDB.DBManager.AppConnection.GetDataSet("select task_status_name, COUNT(*) AS statu_count from (select * from tsk_tasks_v where task_user_id='" + SessionContext.Current.ActiveUser.UserUid + "') as table1 GROUP BY task_status_name");
+        }
+
+        public DataSet GetMyAssignedTaskChartData()
+        {
+            return BaseDB.DBManager.AppConnection.GetDataSet("select task_status_name, COUNT(*) AS statu_count from (select * from tsk_tasks_v where assigned_user_id='" + SessionContext.Current.ActiveUser.UserUid + "') as table1 GROUP BY task_status_name");
+        }
+
+
+
+
+        public void AddTaskHistory(tsk_tasks task)
+        {
+            tsk_tasks_history task_history = new tsk_tasks_history();
+            task_history.task_id = task.task_id;
+            task_history.related_project_id = task.related_project_id;
+            task_history.assigned_user_id = task.assigned_user_id;
+            task_history.task_type_id = task.task_type_id;
+            task_history.task_status_id = task.task_status_id;
+            task_history.task_priority_id= task.task_priority_id;
+            task_history.task_name = task.task_name;
+            task_history.task_description = task.task_description;
+            task_history.start_date = task.start_date;
+            task_history.end_date = task.end_date;
+            task_history.history_by = SessionContext.Current.ActiveUser.UserUid;
+            task_history.history_at = DateTime.UtcNow;
+            db.tsk_tasks_history.Add(task_history);
+            this.Kaydet();
+        }
+
+
+        public void TaskMailSend(Guid user_id,string order_id,string task_name,Guid task_id ,string title,string body,string task_status_name,string type,string user_name_surname="")
+        {
+            #region Mail Gönderiliyor
+
+            GenelRepository gnlDB = RepositoryManager.GetRepository<GenelRepository>();
+            gnl_users userMail = gnlDB.GetUser(user_id);
+                string nameSurnameMail = "";
+
+                if (userMail != null)
+                    nameSurnameMail = userMail.name + " " + userMail.surname;
+
+                DateTime localDateTimeMail = BaseClasses.BaseFunctions.ToLocalTime(DateTime.UtcNow, BaseDB.SessionContext.Current.ActiveUser.TimeZoneInfoUser.Id);
+                string mailBody="";
+                if(type=="1")
+                    mailBody = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + @"Templates\TaskStatusChangeTemplate.html").ReadToEnd();
+                else if (type == "2")
+                    mailBody = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + @"Templates\TaskNewExplanationTemplate.html").ReadToEnd();
+
+                mailBody = mailBody.Replace("%%ad%%", nameSurnameMail);
+                mailBody = mailBody.Replace("%%task_no%%", "#"+order_id.PadLeft(5, '0'));
+
+                string applicationPath = "";
+                if (System.Web.HttpContext.Current.Request.ApplicationPath == "/")
+                    applicationPath = "http://" + System.Web.HttpContext.Current.Request.ServerVariables["HTTP_HOST"] + "/";
+                else
+                    applicationPath = "http://" + System.Web.HttpContext.Current.Request.ServerVariables["HTTP_HOST"] + "/" + System.Web.HttpContext.Current.Request.ApplicationPath + "/";
+
+
+                mailBody = mailBody.Replace("%%path_url%%", applicationPath);
+                mailBody = mailBody.Replace("%%task_name%%", task_name);
+                mailBody = mailBody.Replace("%%task_date%%", localDateTimeMail.ToString());
+                mailBody = mailBody.Replace("%%task_status_name%%", task_status_name);
+                mailBody = mailBody.Replace("%%task_body%%", body);
+                mailBody = mailBody.Replace("%%user_name_surname%%", user_name_surname);
+
+                mailBody = mailBody.Replace("%%task_link%%", applicationPath + "Task/Tasks?RecordId="+task_id+"&MenuId=" + Dcm.Source.GlobalHelper.Encrypt("149"));
+
+                #region mail gönderiliyor
+                if (BaseClasses.BaseFunctions.getInstance().IsEmailValid(userMail.email.Trim()))
+                {
+                    BaseClasses.BaseFunctions.getInstance().SendSMTPMail(userMail.email.Trim(), "", title, mailBody, "", null, "", "genel");
+                }
+                #endregion
+
+
+                #endregion
+        }
+
+        #endregion
+     
+    }
+}

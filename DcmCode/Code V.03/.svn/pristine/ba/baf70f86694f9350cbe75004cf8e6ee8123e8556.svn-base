@@ -1,0 +1,81 @@
+﻿using BaseDB;
+using Dcm.Filters;
+using Dcm.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Security;
+
+namespace Dcm.Controllers
+{
+    public class HomeController : Controller
+    {
+        [SessionCheckAttribute]
+        public ActionResult Index()
+        {
+            SessionContext.Current.ActiveUser.MenuId = "0";
+            return View();
+        }
+
+
+        public PartialViewResult MenuPartial()
+        {
+            var model = GetData();
+            return PartialView("_MenuPartial", model);
+        }
+        
+        private Tree GetData()
+        {
+            var tree = new Tree();
+
+            using (var db = new Dcm.EntityModels.GenelEntities())
+            {
+                // Add each element as a tree node
+                tree.Nodes = db.gnl_menu
+                    .Where(t => t.show_in_menu == 1 || t.show_in_menu == null)
+                    .Select(t => new TreeNode { MenuId = t.menu_id, ParentMenuId = t.parent_menu_id.Value, Name = t.name, MenuOrder = t.menu_order.Value, PrimaryKey = t.primary_key, TableName = t.table_name, ObjectName = t.object_name, OnlyDetailPage = t.only_detail_page, DetailPageUrl=t.detail_page_url, IconClass =t.icon_class})
+                    .ToDictionary(t => t.MenuId);
+
+                // Create a new root node
+                tree.RootNode = new TreeNode { MenuId = 0, Name = "Root" };
+
+                // Build the tree, setting parent and children references for all elements
+                tree.BuildTree();
+            }
+
+            return tree;
+        }
+
+        public ActionResult SetCookie()
+        {
+            bool result = false;
+            if (BaseDB.SessionContext.Current == null || BaseDB.SessionContext.Current.ActiveUser == null)
+            {
+                HttpCookie ck = System.Web.HttpContext.Current.Request.Cookies["DCMGRUP23"];
+
+                if (ck != null)
+                {
+                    try
+                    {
+                        BaseClasses.BaseLogin objLogin = new BaseClasses.BaseLogin();
+                        FormsAuthenticationTicket oldTicket = FormsAuthentication.Decrypt(ck.Value);
+                        result = objLogin.LoginFromRememberMe(oldTicket.Name);
+
+                    }
+                    catch (Exception exp)
+                    {
+
+                    }
+                }
+
+            }
+
+            return Content(result.ToString(), "text/html"); ;
+
+
+        }
+
+    }
+}

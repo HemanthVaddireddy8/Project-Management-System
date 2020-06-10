@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="DataSet1" targetNamespace="http://tempuri.org/DataSet1.xsd" xmlns:mstns="http://tempuri.org/DataSet1.xsd" xmlns="http://tempuri.org/DataSet1.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections>
+          <Connection AppSettingsObjectName="Web.config" AppSettingsPropertyName="AppConnectionString" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="AppConnectionString (Web.config)" ParameterPrefix="@" PropertyReference="AppConfig.System.Configuration.ConfigurationManager.0.ConnectionStrings.AppConnectionString.ConnectionString" Provider="System.Data.SqlClient" />
+        </Connections>
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="DataSet1" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="DataSet1" msprop:Generator_UserDSName="DataSet1">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="tsk_tasks_v" msprop:Generator_TableClassName="tsk_tasks_vDataTable" msprop:Generator_TableVarName="tabletsk_tasks_v" msprop:Generator_TablePropName="tsk_tasks_v" msprop:Generator_RowDeletingName="tsk_tasks_vRowDeleting" msprop:Generator_RowChangingName="tsk_tasks_vRowChanging" msprop:Generator_RowEvHandlerName="tsk_tasks_vRowChangeEventHandler" msprop:Generator_RowDeletedName="tsk_tasks_vRowDeleted" msprop:Generator_UserTableName="tsk_tasks_v" msprop:Generator_RowChangedName="tsk_tasks_vRowChanged" msprop:Generator_RowEvArgName="tsk_tasks_vRowChangeEvent" msprop:Generator_RowClassName="tsk_tasks_vRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="task_id" msdata:DataType="System.Guid, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" msprop:Generator_ColumnVarNameInTable="columntask_id" msprop:Generator_ColumnPropNameInRow="task_id" msprop:Generator_ColumnPropNameInTable="task_idColumn" msprop:Generator_UserColumnName="task_id" type="xs:string" />
+              <xs:element name="task_name" msprop:Generator_ColumnVarNameInTable="columntask_name" msprop:Generator_ColumnPropNameInRow="task_name" msprop:Generator_ColumnPropNameInTable="task_nameColumn" msprop:Generator_UserColumnName="task_name">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="2000" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="task_priority_name" msprop:Generator_ColumnVarNameInTable="columntask_priority_name" msprop:Generator_ColumnPropNameInRow="task_priority_name" msprop:Generator_ColumnPropNameInTable="task_priority_nameColumn" msprop:Generator_UserColumnName="task_priority_name" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="200" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="task_status_name" msprop:Generator_ColumnVarNameInTable="columntask_status_name" msprop:Generator_ColumnPropNameInRow="task_status_name" msprop:Generator_ColumnPropNameInTable="task_status_nameColumn" msprop:Generator_UserColumnName="task_status_name" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="200" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="project_name" msprop:Generator_ColumnVarNameInTable="columnproject_name" msprop:Generator_ColumnPropNameInRow="project_name" msprop:Generator_ColumnPropNameInTable="project_nameColumn" msprop:Generator_UserColumnName="project_name" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="2000" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="assigned_user_name" msdata:ReadOnly="true" msprop:Generator_ColumnVarNameInTable="columnassigned_user_name" msprop:Generator_ColumnPropNameInRow="assigned_user_name" msprop:Generator_ColumnPropNameInTable="assigned_user_nameColumn" msprop:Generator_UserColumnName="assigned_user_name" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="101" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="task_owner" msdata:ReadOnly="true" msprop:Generator_ColumnVarNameInTable="columntask_owner" msprop:Generator_ColumnPropNameInRow="task_owner" msprop:Generator_ColumnPropNameInTable="task_ownerColumn" msprop:Generator_UserColumnName="task_owner" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="101" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="start_date" msdata:ReadOnly="true" msprop:Generator_ColumnVarNameInTable="columnstart_date" msprop:Generator_ColumnPropNameInRow="start_date" msprop:Generator_ColumnPropNameInTable="start_dateColumn" msprop:Generator_UserColumnName="start_date" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="10" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="end_date" msdata:ReadOnly="true" msprop:Generator_ColumnVarNameInTable="columnend_date" msprop:Generator_ColumnPropNameInRow="end_date" msprop:Generator_ColumnPropNameInTable="end_dateColumn" msprop:Generator_UserColumnName="end_date" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="10" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="is_active" msdata:ReadOnly="true" msprop:Generator_ColumnVarNameInTable="columnis_active" msprop:Generator_ColumnPropNameInRow="is_active" msprop:Generator_ColumnPropNameInTable="is_activeColumn" msprop:Generator_UserColumnName="is_active" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="5" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="task_user_id" msdata:DataType="System.Guid, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" msprop:Generator_ColumnVarNameInTable="columntask_user_id" msprop:Generator_ColumnPropNameInRow="task_user_id" msprop:Generator_ColumnPropNameInTable="task_user_idColumn" msprop:Generator_UserColumnName="task_user_id" type="xs:string" />
+              <xs:element name="assigned_user_id" msdata:DataType="System.Guid, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" msprop:Generator_ColumnVarNameInTable="columnassigned_user_id" msprop:Generator_ColumnPropNameInRow="assigned_user_id" msprop:Generator_ColumnPropNameInTable="assigned_user_idColumn" msprop:Generator_UserColumnName="assigned_user_id" type="xs:string" />
+              <xs:element name="task_status_id" msprop:Generator_ColumnVarNameInTable="columntask_status_id" msprop:Generator_ColumnPropNameInRow="task_status_id" msprop:Generator_ColumnPropNameInTable="task_status_idColumn" msprop:Generator_UserColumnName="task_status_id" type="xs:int" />
+              <xs:element name="is_active_bit" msprop:Generator_ColumnVarNameInTable="columnis_active_bit" msprop:Generator_ColumnPropNameInRow="is_active_bit" msprop:Generator_ColumnPropNameInTable="is_active_bitColumn" msprop:Generator_UserColumnName="is_active_bit" type="xs:boolean" minOccurs="0" />
+              <xs:element name="order_id" msprop:Generator_ColumnVarNameInTable="columnorder_id" msprop:Generator_ColumnPropNameInRow="order_id" msprop:Generator_ColumnPropNameInTable="order_idColumn" msprop:Generator_UserColumnName="order_id" type="xs:int" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:tsk_tasks_v" />
+      <xs:field xpath="mstns:task_id" />
+    </xs:unique>
+  </xs:element>
+</xs:schema>

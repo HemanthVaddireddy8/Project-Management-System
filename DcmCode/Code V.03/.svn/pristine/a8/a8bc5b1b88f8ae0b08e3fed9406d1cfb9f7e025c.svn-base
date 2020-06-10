@@ -1,0 +1,312 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="DCMModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="crm_bireyler">
+          <Key>
+            <PropertyRef Name="birey_id" />
+          </Key>
+          <Property Name="birey_id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="calistigi_kurum_id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ad" Type="nvarchar" MaxLength="50" />
+          <Property Name="soyad" Type="nvarchar" MaxLength="50" />
+          <Property Name="turu_id" Type="int" />
+          <Property Name="eposta_adresi" Type="nvarchar" MaxLength="100" />
+          <Property Name="mobile_phone" Type="nvarchar" MaxLength="50" />
+          <Property Name="telefonu_1" Type="nvarchar" MaxLength="50" />
+          <Property Name="telefonu_2" Type="nvarchar" MaxLength="50" />
+          <Property Name="faksi_1" Type="nvarchar" MaxLength="50" />
+          <Property Name="faksi_2" Type="nvarchar" MaxLength="50" />
+          <Property Name="adres" Type="nvarchar" MaxLength="2000" />
+          <Property Name="web_sitesi" Type="nvarchar" MaxLength="50" />
+          <Property Name="note" Type="nvarchar" MaxLength="4000" />
+          <Property Name="is_active" Type="bit" />
+          <Property Name="is_deleted" Type="bit" />
+          <Property Name="inserted_by" Type="uniqueidentifier" />
+          <Property Name="inserted_at" Type="datetime" />
+          <Property Name="updated_by" Type="uniqueidentifier" />
+          <Property Name="updated_at" Type="datetime" />
+          <Property Name="deleted_by" Type="uniqueidentifier" />
+          <Property Name="deleted_at" Type="datetime" />
+        </EntityType>
+        <EntityType Name="crm_kurumlar">
+          <Key>
+            <PropertyRef Name="kurum_id" />
+          </Key>
+          <Property Name="kurum_id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="kodu" Type="nvarchar" MaxLength="500" />
+          <Property Name="turu_id" Type="int" />
+          <Property Name="ticari_unvani" Type="nvarchar" MaxLength="1000" />
+          <Property Name="vergi_no" Type="nvarchar" MaxLength="50" />
+          <Property Name="vergi_dairesi" Type="nvarchar" MaxLength="100" />
+          <Property Name="kurulus_yili" Type="int" />
+          <Property Name="calisan_sayisi" Type="int" />
+          <Property Name="eposta_adresi" Type="nvarchar" MaxLength="100" />
+          <Property Name="telefonu_1" Type="nvarchar" MaxLength="50" />
+          <Property Name="telefonu_2" Type="nvarchar" MaxLength="50" />
+          <Property Name="faksi_1" Type="nvarchar" MaxLength="50" />
+          <Property Name="faksi_2" Type="nvarchar" MaxLength="50" />
+          <Property Name="adres" Type="nvarchar" MaxLength="2000" />
+          <Property Name="web_sitesi" Type="nvarchar" MaxLength="50" />
+          <Property Name="note" Type="nvarchar" MaxLength="4000" />
+          <Property Name="is_active" Type="bit" />
+          <Property Name="is_deleted" Type="bit" />
+          <Property Name="inserted_by" Type="uniqueidentifier" />
+          <Property Name="inserted_at" Type="datetime" />
+          <Property Name="updated_by" Type="uniqueidentifier" />
+          <Property Name="updated_at" Type="datetime" />
+          <Property Name="deleted_by" Type="uniqueidentifier" />
+          <Property Name="deleted_at" Type="datetime" />
+          <Property Name="mobile_phone" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="crm_projects">
+          <Key>
+            <PropertyRef Name="project_id" />
+          </Key>
+          <Property Name="project_id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="kurum_id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="birey_id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="project_type_id" Type="int" Nullable="false" />
+          <Property Name="project_assigned_user_id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="project_name" Type="nvarchar" MaxLength="2000" />
+          <Property Name="project_description" Type="nvarchar" MaxLength="4000" />
+          <Property Name="note" Type="nvarchar" MaxLength="4000" />
+          <Property Name="is_active" Type="bit" />
+          <Property Name="is_deleted" Type="bit" />
+          <Property Name="inserted_by" Type="uniqueidentifier" />
+          <Property Name="inserted_at" Type="datetime" />
+          <Property Name="updated_by" Type="uniqueidentifier" />
+          <Property Name="updated_at" Type="datetime" />
+          <Property Name="deleted_by" Type="uniqueidentifier" />
+          <Property Name="deleted_at" Type="datetime" />
+        </EntityType>
+        <EntityType Name="ref_crm_project_types">
+          <Key>
+            <PropertyRef Name="project_type_id" />
+          </Key>
+          <Property Name="project_type_id" Type="int" Nullable="false" />
+          <Property Name="project_type_name" Type="nvarchar" MaxLength="200" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="DCMModelStoreContainer">
+          <EntitySet Name="crm_bireyler" EntityType="Self.crm_bireyler" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="crm_kurumlar" EntityType="Self.crm_kurumlar" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="crm_projects" EntityType="Self.crm_projects" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ref_crm_project_types" EntityType="Self.ref_crm_project_types" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="DCMModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="CrmEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="crm_kurumlar" EntityType="DCMModel.crm_kurumlar" />
+          <EntitySet Name="crm_bireyler" EntityType="DCMModel.crm_bireyler" />
+          <EntitySet Name="crm_projects" EntityType="DCMModel.crm_projects" />
+          <EntitySet Name="ref_crm_project_types" EntityType="DCMModel.ref_crm_project_types" />
+        </EntityContainer>
+        <EntityType Name="crm_kurumlar">
+          <Key>
+            <PropertyRef Name="kurum_id" />
+          </Key>
+          <Property Name="kurum_id" Type="Guid" Nullable="false" />
+          <Property Name="kodu" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="turu_id" Type="Int32" />
+          <Property Name="ticari_unvani" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="vergi_no" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="vergi_dairesi" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="kurulus_yili" Type="Int32" />
+          <Property Name="calisan_sayisi" Type="Int32" />
+          <Property Name="eposta_adresi" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="telefonu_1" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="telefonu_2" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="faksi_1" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="faksi_2" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="adres" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="web_sitesi" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="note" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <Property Name="is_active" Type="Boolean" />
+          <Property Name="is_deleted" Type="Boolean" />
+          <Property Name="inserted_by" Type="Guid" />
+          <Property Name="inserted_at" Type="DateTime" Precision="3" />
+          <Property Name="updated_by" Type="Guid" />
+          <Property Name="updated_at" Type="DateTime" Precision="3" />
+          <Property Name="deleted_by" Type="Guid" />
+          <Property Name="deleted_at" Type="DateTime" Precision="3" />
+          <Property Name="mobile_phone" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="crm_bireyler">
+          <Key>
+            <PropertyRef Name="birey_id" />
+          </Key>
+          <Property Name="birey_id" Type="Guid" Nullable="false" />
+          <Property Name="calistigi_kurum_id" Type="Guid" Nullable="false" />
+          <Property Name="ad" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="soyad" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="turu_id" Type="Int32" />
+          <Property Name="eposta_adresi" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="mobile_phone" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="telefonu_1" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="telefonu_2" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="faksi_1" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="faksi_2" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="adres" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="web_sitesi" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="note" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <Property Name="is_active" Type="Boolean" />
+          <Property Name="is_deleted" Type="Boolean" />
+          <Property Name="inserted_by" Type="Guid" />
+          <Property Name="inserted_at" Type="DateTime" Precision="3" />
+          <Property Name="updated_by" Type="Guid" />
+          <Property Name="updated_at" Type="DateTime" Precision="3" />
+          <Property Name="deleted_by" Type="Guid" />
+          <Property Name="deleted_at" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="crm_projects">
+          <Key>
+            <PropertyRef Name="project_id" />
+          </Key>
+          <Property Name="project_id" Type="Guid" Nullable="false" />
+          <Property Name="kurum_id" Type="Guid" Nullable="false" />
+          <Property Name="birey_id" Type="Guid" Nullable="false" />
+          <Property Name="project_type_id" Type="Int32" Nullable="false" />
+          <Property Name="project_assigned_user_id" Type="Guid" Nullable="false" />
+          <Property Name="project_name" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="project_description" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <Property Name="note" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <Property Name="is_active" Type="Boolean" />
+          <Property Name="is_deleted" Type="Boolean" />
+          <Property Name="inserted_by" Type="Guid" />
+          <Property Name="inserted_at" Type="DateTime" Precision="3" />
+          <Property Name="updated_by" Type="Guid" />
+          <Property Name="updated_at" Type="DateTime" Precision="3" />
+          <Property Name="deleted_by" Type="Guid" />
+          <Property Name="deleted_at" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="ref_crm_project_types">
+          <Key>
+            <PropertyRef Name="project_type_id" />
+          </Key>
+          <Property Name="project_type_id" Type="Int32" Nullable="false" />
+          <Property Name="project_type_name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="DCMModelStoreContainer" CdmEntityContainer="CrmEntities">
+          <EntitySetMapping Name="crm_kurumlar">
+            <EntityTypeMapping TypeName="DCMModel.crm_kurumlar">
+              <MappingFragment StoreEntitySet="crm_kurumlar">
+                <ScalarProperty Name="mobile_phone" ColumnName="mobile_phone" />
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="deleted_by" ColumnName="deleted_by" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="updated_by" ColumnName="updated_by" />
+                <ScalarProperty Name="inserted_at" ColumnName="inserted_at" />
+                <ScalarProperty Name="inserted_by" ColumnName="inserted_by" />
+                <ScalarProperty Name="is_deleted" ColumnName="is_deleted" />
+                <ScalarProperty Name="is_active" ColumnName="is_active" />
+                <ScalarProperty Name="note" ColumnName="note" />
+                <ScalarProperty Name="web_sitesi" ColumnName="web_sitesi" />
+                <ScalarProperty Name="adres" ColumnName="adres" />
+                <ScalarProperty Name="faksi_2" ColumnName="faksi_2" />
+                <ScalarProperty Name="faksi_1" ColumnName="faksi_1" />
+                <ScalarProperty Name="telefonu_2" ColumnName="telefonu_2" />
+                <ScalarProperty Name="telefonu_1" ColumnName="telefonu_1" />
+                <ScalarProperty Name="eposta_adresi" ColumnName="eposta_adresi" />
+                <ScalarProperty Name="calisan_sayisi" ColumnName="calisan_sayisi" />
+                <ScalarProperty Name="kurulus_yili" ColumnName="kurulus_yili" />
+                <ScalarProperty Name="vergi_dairesi" ColumnName="vergi_dairesi" />
+                <ScalarProperty Name="vergi_no" ColumnName="vergi_no" />
+                <ScalarProperty Name="ticari_unvani" ColumnName="ticari_unvani" />
+                <ScalarProperty Name="turu_id" ColumnName="turu_id" />
+                <ScalarProperty Name="kodu" ColumnName="kodu" />
+                <ScalarProperty Name="kurum_id" ColumnName="kurum_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="crm_bireyler">
+            <EntityTypeMapping TypeName="DCMModel.crm_bireyler">
+              <MappingFragment StoreEntitySet="crm_bireyler">
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="deleted_by" ColumnName="deleted_by" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="updated_by" ColumnName="updated_by" />
+                <ScalarProperty Name="inserted_at" ColumnName="inserted_at" />
+                <ScalarProperty Name="inserted_by" ColumnName="inserted_by" />
+                <ScalarProperty Name="is_deleted" ColumnName="is_deleted" />
+                <ScalarProperty Name="is_active" ColumnName="is_active" />
+                <ScalarProperty Name="note" ColumnName="note" />
+                <ScalarProperty Name="web_sitesi" ColumnName="web_sitesi" />
+                <ScalarProperty Name="adres" ColumnName="adres" />
+                <ScalarProperty Name="faksi_2" ColumnName="faksi_2" />
+                <ScalarProperty Name="faksi_1" ColumnName="faksi_1" />
+                <ScalarProperty Name="telefonu_2" ColumnName="telefonu_2" />
+                <ScalarProperty Name="telefonu_1" ColumnName="telefonu_1" />
+                <ScalarProperty Name="mobile_phone" ColumnName="mobile_phone" />
+                <ScalarProperty Name="eposta_adresi" ColumnName="eposta_adresi" />
+                <ScalarProperty Name="turu_id" ColumnName="turu_id" />
+                <ScalarProperty Name="soyad" ColumnName="soyad" />
+                <ScalarProperty Name="ad" ColumnName="ad" />
+                <ScalarProperty Name="calistigi_kurum_id" ColumnName="calistigi_kurum_id" />
+                <ScalarProperty Name="birey_id" ColumnName="birey_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="crm_projects">
+            <EntityTypeMapping TypeName="DCMModel.crm_projects">
+              <MappingFragment StoreEntitySet="crm_projects">
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="deleted_by" ColumnName="deleted_by" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="updated_by" ColumnName="updated_by" />
+                <ScalarProperty Name="inserted_at" ColumnName="inserted_at" />
+                <ScalarProperty Name="inserted_by" ColumnName="inserted_by" />
+                <ScalarProperty Name="is_deleted" ColumnName="is_deleted" />
+                <ScalarProperty Name="is_active" ColumnName="is_active" />
+                <ScalarProperty Name="note" ColumnName="note" />
+                <ScalarProperty Name="project_description" ColumnName="project_description" />
+                <ScalarProperty Name="project_name" ColumnName="project_name" />
+                <ScalarProperty Name="project_assigned_user_id" ColumnName="project_assigned_user_id" />
+                <ScalarProperty Name="project_type_id" ColumnName="project_type_id" />
+                <ScalarProperty Name="birey_id" ColumnName="birey_id" />
+                <ScalarProperty Name="kurum_id" ColumnName="kurum_id" />
+                <ScalarProperty Name="project_id" ColumnName="project_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ref_crm_project_types">
+            <EntityTypeMapping TypeName="DCMModel.ref_crm_project_types">
+              <MappingFragment StoreEntitySet="ref_crm_project_types">
+                <ScalarProperty Name="project_type_name" ColumnName="project_type_name" />
+                <ScalarProperty Name="project_type_id" ColumnName="project_type_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

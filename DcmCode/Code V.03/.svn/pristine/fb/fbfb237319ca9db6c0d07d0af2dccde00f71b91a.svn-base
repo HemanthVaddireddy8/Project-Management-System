@@ -1,0 +1,56 @@
+﻿using Dcm.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace Dcm.Controllers
+{
+    public class HomeController : Controller
+    {
+        public ActionResult Index()
+        {
+            var model = GetData();
+            return View(model);
+        }
+
+        
+
+        public ActionResult About()
+        {
+            ViewBag.Message = "Your application description page.";
+
+            return View();
+        }
+
+        public ActionResult Contact()
+        {
+            ViewBag.Message = "Your contact page.";
+
+            return View();
+        }
+
+        private Tree GetData()
+        {
+            var tree = new Tree();
+
+            using (var db = new Dcm.EntityModels.GenelEntities())
+            {
+                // Add each element as a tree node
+                tree.Nodes = db.gnl_menu
+                    .Select(t => new TreeNode { Id = t.menu_id, ParentId = t.parent_menu_id.Value, Name = t.name })
+                    .ToDictionary(t => t.Id);
+
+                // Create a new root node
+                tree.RootNode = new TreeNode { Id = 0, Name = "Root" };
+
+                // Build the tree, setting parent and children references for all elements
+                tree.BuildTree();
+            }
+
+            return tree;
+        }
+
+    }
+}

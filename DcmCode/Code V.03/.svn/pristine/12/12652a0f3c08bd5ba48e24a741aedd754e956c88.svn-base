@@ -1,0 +1,140 @@
+﻿using Dcm.Models;
+using Dcm.Source;
+using Gunluk.EntityModels;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Dcm.EntityModels;
+using BaseDB;
+using Dcm.Filters;
+
+namespace Dcm.Controllers
+{
+    public class UsersController : Controller
+    {
+        [HttpGet]
+        [AllowAnonymous]
+        [SessionCheckAttribute]
+        public ActionResult User(string RecordId,string MenuId )
+        {
+            GenelRepository gnlDB = RepositoryManager.GetRepository<GenelRepository>();
+            User model = new User();
+
+            #region Ortak Set Edilecek Değerler  
+            model.RecordId = RecordId;
+            model.MenuId = MenuId;
+            SessionContext.Current.ActiveUser.MenuId = MenuId;
+            #endregion
+
+            Guid recordId = Guid.Empty;
+
+            if (GlobalHelper.IsGuid(model.RecordId))
+            {
+                try
+                {
+                    recordId = Guid.Parse(model.RecordId);
+                    model = gnlDB.BindUser(model, recordId);
+                    ViewBag.ResultMessage = Resources.GlobalResource.transaction_success;
+                }
+                catch (Exception exp)
+                {
+                    ViewBag.Success = false;
+                    ModelState.AddModelError("Error", exp.Message);
+                }
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [SessionCheckAttribute]
+        public ActionResult User(User model)
+        {
+            Guid recordId = Guid.Empty;
+            GenelRepository gnlDB = RepositoryManager.GetRepository<GenelRepository>();
+
+            #region Ortak Set Edilecek Değerler
+            SessionContext.Current.ActiveUser.MenuId = model.MenuId;
+            ViewBag.Success = true;
+            #endregion
+
+            ModelState.Remove("start_date");
+            ModelState.Remove("end_date");
+            ModelState.Remove("is_active");
+
+            if (ModelState.IsValid)
+            {
+                if (GlobalHelper.IsGuid(model.RecordId))
+                {
+                    recordId = Guid.Parse(model.RecordId);
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(model.password))
+                            model.password = GlobalHelper.EncriptText(model.password.Trim());
+
+                        gnl_users userByEmail = new gnl_users();
+                        userByEmail = gnlDB.GetUserByEmail(model.email.Trim());
+
+                        if (userByEmail != null && userByEmail.user_id != recordId)
+                        {
+                            ViewBag.Success = false;
+                            ModelState.AddModelError("Error", Resources.GlobalResource.exists_user_email);
+                        }
+                        else
+                        {
+                            model = gnlDB.UpdateUser(model, recordId);
+                            ViewBag.ResultMessage = Resources.GlobalResource.transaction_success;
+                        }
+                    }
+                    catch (Exception exp)
+                    {
+                        ViewBag.Success = false;
+                        ModelState.AddModelError("Error", exp.Message);
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        gnl_users user = new gnl_users();
+
+                        if (!string.IsNullOrEmpty(model.password))
+                            model.password = GlobalHelper.EncriptText(model.password.Trim());
+
+                        gnl_users userByEmail = new gnl_users();
+                        userByEmail = gnlDB.GetUserByEmail(model.email.Trim());
+
+                        if (userByEmail != null)
+                        {
+                            ViewBag.Success = false;
+                            ModelState.AddModelError("Error", Resources.GlobalResource.exists_user_email);
+                        }
+                        else
+                        {
+                            gnlDB.AddUser(user, model);
+                            model.RecordId = user.user_id.ToString();
+                            ViewBag.ResultMessage = Resources.GlobalResource.transaction_success;
+                        }
+                    }
+                    catch (Exception exp)
+                    {
+                        ViewBag.Success = false;
+                        ModelState.AddModelError("Error", exp.Message);
+                    }
+                }
+            }
+            else
+            {
+                ViewBag.Success = false;
+            }
+            
+            return View(model);
+        }
+
+      
+    }
+}

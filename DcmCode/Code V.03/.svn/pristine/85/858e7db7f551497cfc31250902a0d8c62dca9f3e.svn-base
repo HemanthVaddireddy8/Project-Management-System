@@ -1,0 +1,43 @@
+﻿using Dcm.EntityModels;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
+
+namespace Dcm.Models
+{
+    public class Index
+    {
+        public List<AllTaskStatusChartSourceData> allTaskStatusChartSourceData { get; set; }
+
+        public List<MyAssignedTaskStatusChartSourceData> myAssignedTaskStatusChartSourceData { get; set; }
+
+        public List<MyTaskStatusChartSourceData> myTaskStatusChartSourceData { get; set; }
+
+    }
+
+    public class AllTaskStatusChartSourceData
+    {
+        public string label { get; set; }
+        public int value { get; set; }
+        public string color { get; set; }
+        public string hightlight { get; set; }
+    }
+
+    public class MyAssignedTaskStatusChartSourceData
+    {
+        public string label { get; set; }
+        public int value { get; set; }
+        public string color { get; set; }
+        public string hightlight { get; set; }
+    }
+
+    public class MyTaskStatusChartSourceData
+    {
+        public string label { get; set; }
+        public int value { get; set; }
+        public string color { get; set; }
+        public string hightlight { get; set; }
+    }
+}

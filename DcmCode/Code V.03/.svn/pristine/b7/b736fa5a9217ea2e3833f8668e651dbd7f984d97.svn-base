@@ -1,0 +1,83 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div style="margin-top:-10px">
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <h4>Bana Atanan Görevler</h4>
+                </div>
+                <div class="panel-body">
+                    <canvas id="donut-chart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6">
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <h4>Devam Eden Görevler</h4>
+                </div>
+                <div class="panel-body">
+                    <canvas id="polar-area-chart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="col-sm-12 col-md-6">
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <h4>Biten Görevler</h4>
+                </div>
+                <div class="panel-body">
+                    <canvas id="pie-chart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6">
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <h4>Görev Dağılımı</h4>
+                </div>
+                <div class="panel-body">
+                    <canvas id="radar-chart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-lg-6">
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <h4>Görev Zaman Dağılımı</h4>
+                </div>
+                <div class="panel-body">
+                    <canvas id="line-chart" height="300" width="500"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 col-lg-6">
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <h4>Görevlerim</h4>
+                </div>
+                <div class="panel-body">
+                    <canvas id="bar-chart" height="300" width="500"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script type='text/javascript' src='assets/plugins/charts-chartjs/Chart.min.js'></script>
+<script type='text/javascript' src='assets/demo/demo-chartjs.js'></script>
+

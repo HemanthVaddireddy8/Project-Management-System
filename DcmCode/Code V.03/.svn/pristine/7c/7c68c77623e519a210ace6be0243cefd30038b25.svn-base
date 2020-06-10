@@ -1,0 +1,29 @@
+﻿using Dcm.Models;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace Dcm.Controllers
+{
+    public class UsersController : Controller
+    {
+        [AllowAnonymous]
+        public ActionResult Role(int RecordId)
+        {
+            return View();
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult ListPage()
+        {
+            DataSet ds = new DataSet();
+            return View(ds);
+        }
+
+    }
+}

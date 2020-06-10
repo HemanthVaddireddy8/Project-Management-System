@@ -1,0 +1,161 @@
+﻿@model System.Data.DataSet
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    ViewBag.Title = "Liste Sayfası";
+}
+
+<link rel='stylesheet' type='text/css' href='~/assets/plugins/datatables/dataTables.css' />
+<link rel='stylesheet' type='text/css' href='~/assets/plugins/codeprettifier/prettify.css' />
+<link rel='stylesheet' type='text/css' href='~/assets/plugins/form-toggle/toggles.css' /> 
+
+<div id='wrap'>
+    <div id="page-heading" style="
+    margin-top: -15px;
+">
+
+        <h3>@ViewBag.ListName</h3>
+        <div class="options">
+            <div class="btn-toolbar">
+                <a href="@(ViewBag.DetailPageName + "?MenuId=" + ViewBag.MenuId + "&RecordId=" + Guid.Empty)" class="btn btn-default"><i class="fa fa-file-o"></i><span style="padding-left:10px">Yeni Kayıt</span></a>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-sky">
+                    <div class="panel-heading">
+                        <h4></h4>
+                        <div class="options">
+                            <a href="javascript:;"><i class="fa fa-cog"></i></a>
+                            <a href="javascript:;"><i class="fa fa-wrench"></i></a>
+                            <a href="javascript:;" class="panel-collapse"><i class="fa fa-chevron-down"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body collapse in">
+                        <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered datatables" id="example" style="padding:0px !important">
+                            <thead>
+                                <tr>
+                                    <th style="width:20px">Detail</th>
+                                    @foreach (System.Data.DataColumn col in Model.Tables[0].Columns)
+                                    {
+                                        if (!ViewBag.HideColumns.Contains(col.ColumnName))
+                                        { 
+                                            <th>col.ColumnName</th>
+                                        }
+                                    }
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @*@{
+                                int i = 0;
+                                foreach (System.Data.DataRow row in Model.Tables[0].Rows)
+                                {
+                                    if (i % 2 == 0)
+                                    {
+                                        <tr class="odd">
+
+                                            <td style="text-align:center"><a  href="@(ViewBag.DetailPageName + "?MenuId=" + ViewBag.MenuId + "&RecordId=" + row[ViewBag.PrimaryKey])" ><span class="fa fa-edit" style="font-size:18px"></span></a></td>
+
+                                            @foreach (System.Data.DataColumn col in Model.Tables[0].Columns)
+                                            {
+                                                if (!ViewBag.HideColumns.Contains(col.ColumnName))
+                                                { 
+                                                    <td>@row[col.ColumnName]</td>
+                                                }
+                                            }
+                                        </tr>
+                                    }
+                                else 
+                                    {
+                                        <tr class="even">
+
+                                            <td style="text-align:center"><a href="@(ViewBag.DetailPageName + "?MenuId=" + ViewBag.MenuId + "&RecordId=" + row[ViewBag.PrimaryKey])"><span class="fa fa-edit" style="font-size:18px"></span></a></td>
+                                            @foreach (System.Data.DataColumn col in Model.Tables[0].Columns)
+                                            {
+                                                if (!ViewBag.HideColumns.Contains(col.ColumnName))
+                                                { 
+                                                    <td>@row[col.ColumnName]</td>
+                                                }
+                                            }
+                                        </tr>
+                                    }
+                                    i++;
+                                }
+                            }*@
+                                    
+                               
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- container -->
+</div> 
+
+<style>
+
+    .table-bordered > tbody > tr > td {
+        padding: 5px;
+        line-height: 1.428571429;
+        vertical-align: top;
+        border-top: 1px solid #e6e7e8;
+    }
+
+    #wrap > .container {
+        padding: 10px;
+    }
+
+    #wrap {
+     
+        margin-top: 0px;
+    }
+</style>
+<script type='text/javascript' src='~/assets/plugins/datatables/jquery.dataTables.min.js'></script>
+<script type='text/javascript' src='~/assets/plugins/datatables/dataTables.bootstrap.js'></script>
+
+<script>
+$(document).ready(function() {
+    $('.datatables').dataTable({
+        "sDom": "<'row'<'col-xs-6'l><'col-xs-6'f>r>t<'row'<'col-xs-6'i><'col-xs-6'p>>",
+        "sPaginationType": "bootstrap",
+        "bServerSide": true,
+        "sAjaxSource": "../General/AjaxHandler?MenuId=" + '@ViewBag.MenuId',
+        "bProcessing": true,
+        "aoColumnDefs": [
+            {
+                bSortable: false,
+                aTargets: [0],
+            }
+        ],
+      
+        "oLanguage": {
+            "sLengthMenu": "_MENU_",
+            "sZeroRecords": "Gösterilecek kayıt bulunamadı.",
+            "sInfo": "( _START_ - _END_ ) / _TOTAL_ kayıt",
+            "sInfoFiltered": "(Toplam _MAX_ kayıt.)",
+            "sInfoEmpty": "Filtrelenen kayıt yok.",
+            "oPaginate": {
+                "sFirst": "First",
+                "sLast": "Last",
+                "sNext": "Sonraki",
+                "sPrevious": "Önceki"
+            },
+            
+        }
+
+    });
+    $('.dataTables_filter input').addClass('form-control').attr('placeholder','Ara...');
+    $('.dataTables_length select').addClass('form-control');
+});
+</script>
+

@@ -1,0 +1,72 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Data;
+using System.Collections;
+using System.Globalization;
+
+namespace Gunluk.EntityModels
+{
+    public class GenelRepository : BaseDB.BaseRepository<Dcm.EntityModels.GenelEntities>
+    {
+
+        #region Kullanıcı Register İşlemleri
+        //public gnl_kullanicilar KullaniciGetir(Guid user_uid)
+        //{
+        //    return db.gnl_kullanicilar.SingleOrDefault(d => d.user_uid == user_uid);
+        //}
+
+        
+        //public gnl_kullanicilar KullaniciGetirEmaileGore(string email)
+        //{
+        //    return db.gnl_kullanicilar.SingleOrDefault(d => d.email == email);
+        //}
+
+        //public gnl_kullanicilar KullaniciGetirEmaileGoreSignUpped(string email)
+        //{
+        //    return db.gnl_kullanicilar.SingleOrDefault(d => d.email == email && d.is_sign_up==true);
+        //}
+
+        //public gnl_kullanicilar KullaniciGetirUsernameGoreSignUpped(string username)
+        //{
+        //    return db.gnl_kullanicilar.SingleOrDefault(d => d.user_name == username.Trim() && d.is_sign_up == true);
+        //}
+
+        //public void KullaniciEkle(gnl_kullanicilar kullanici)
+        //{
+        //    kullanici.user_uid = Guid.NewGuid();
+        //    HttpBrowserCapabilities bc = HttpContext.Current.Request.Browser;
+
+        //    kullanici.host_name = HttpContext.Current.Request.UserHostName;
+        //    kullanici.host_address = HttpContext.Current.Request.UserHostAddress;
+        //    kullanici.browser = bc.Browser;
+        //    kullanici.platform = bc.Platform;
+        //    kullanici.version = bc.Version;
+        //    kullanici.is_mobile_device = bc.IsMobileDevice;
+
+        //    db.gnl_kullanicilar.Add(kullanici);
+
+        //}
+
+        //public void AddUserImage(gnl_kullanicilar_image image)
+        //{
+        //    image.uid = Guid.NewGuid();
+        //    image.date = DateTime.UtcNow;
+        //    db.gnl_kullanicilar_image.Add(image);
+
+        //}
+
+        //public gnl_kullanicilar_image GetUserImage(Guid uid)
+        //{
+        //    return db.gnl_kullanicilar_image.SingleOrDefault(d => d.uid == uid);
+        //}
+        #endregion
+
+        #region Şifre Sıfırlama
+      
+
+        #endregion
+
+    }
+}

@@ -1,0 +1,296 @@
+﻿@model Dcm.Models.User
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    ViewBag.Title = "Kullanıcılar";
+}
+
+<link rel='stylesheet' type='text/css' href='~/assets/plugins/datatables/dataTables.css' />
+<link rel='stylesheet' type='text/css' href='~/assets/plugins/codeprettifier/prettify.css' />
+<link rel='stylesheet' type='text/css' href='~/assets/plugins/form-toggle/toggles.css' />
+@using (Html.BeginForm("User", "Users", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data", data_validate = "parsley", novalidate = "", id = "validate-form" }))
+{
+    <input type="hidden" name="RecordId" id="RecordId" value="@Model.RecordId" />
+    <input type="hidden" name="MenuId" id="MenuId" value="@Model.MenuId" />
+    <div id='wrap'>
+        <div id="page-heading" style="
+    margin-top: -15px;
+">
+
+            <h3>Kullanıcı Bilgileri</h3>
+
+            <div class="options">
+                <div class="btn-toolbar">
+                    <a href="@(Url.Action("ListPage","General")+"?MenuId="+Model.MenuId)" class="btn btn-default"><i class="fa fa-list"></i><span style="padding-left:10px">Listeye Dön</span></a>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="container">
+            <div id="message_div" class="alert alert-info" style="display:none;vertical-align:top">
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary()
+                @ViewBag.ResultMessage
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h4>Detay</h4>
+
+                        </div>
+                        <div class="panel-body">
+
+                            <div class="form-group">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("name")</label>
+                                </div>
+
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <input type="text" class="form-control" name="name" required="required" id="name" value="@Model.name" autocomplete="off" placeholder="@Dcm.Source.GlobalHelper.GetGlobalResource("name")">
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <p><label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("surname")</label></p>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <p><input type="text" name="surname" id="surname" required="required" value="@Model.surname" class="form-control" autocomplete="off" placeholder="@Dcm.Source.GlobalHelper.GetGlobalResource("surname")"></p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("email")</label>
+                                </div>
+
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <input type="text" class="form-control" name="email" data-type="email" value="@Model.email" required="required" id="email" autocomplete="off" placeholder="@Dcm.Source.GlobalHelper.GetGlobalResource("email")">
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <p><label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("password")</label></p>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <p><input type="password" name="password" id="password" autocomplete="off" class="form-control" placeholder="@Dcm.Source.GlobalHelper.GetGlobalResource("password")"></p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("mobilephone")</label>
+                                </div>
+
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <input type="text" class="form-control mask" data-type="phone" required="required" value="@Model.mobile_phone" autocomplete="off" data-inputmask="'mask':'(999) 999-9999'" name="mobile_phone" id="mobile_phone" placeholder="@Dcm.Source.GlobalHelper.GetGlobalResource("mobilephone")">
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("homephone")</label>
+                                </div>
+
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <input type="text" class="form-control mask" value="@Model.home_phone" autocomplete="off" data-inputmask="'mask':'(999) 999-9999'" name="home_phone" id="home_phone" placeholder="@Dcm.Source.GlobalHelper.GetGlobalResource("homephone")">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("identitynumber")</label>
+                                </div>
+
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <input type="text" class="form-control" name="identity_number" value="@Model.identity_number" autocomplete="off" id="identitynumber" placeholder="@Dcm.Source.GlobalHelper.GetGlobalResource("identitynumber")">
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("birthdate")</label>
+                                </div>
+
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 ">
+                                    <div class="input-group date">
+                                        <table>
+                                            <tr>
+                                                <td style="vertical-align:top" class="form-validate">
+                                                    <input type="text" class="form-control " style="width:200px" required="required" name="birth_date" id="birth_date" placeholder="@Dcm.Source.GlobalHelper.GetGlobalResource("birthdate")">
+                                                </td>
+                                                <td style="vertical-align:top">
+                                                    <span class="input-group-addon" style="height:33px"><i class="fa fa-calendar"></i></span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("startdate")</label>
+                                </div>
+
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <div class="input-group date">
+                                        <table>
+                                            <tr>
+                                                <td style="vertical-align:top" class="form-validate">
+                                                    <input type="text" class="form-control " value="" style="width:200px" name="start_date" id="start_date" placeholder="@Dcm.Source.GlobalHelper.GetGlobalResource("startdate")">
+                                                </td>
+                                                <td style="vertical-align:top">
+                                                    <span class="input-group-addon" style="height:33px"><i class="fa fa-calendar"></i></span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("enddate")</label>
+                                </div>
+
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <div class="input-group date">
+                                        <table>
+                                            <tr>
+                                                <td style="vertical-align:top" class="form-validate">
+                                                    <input type="text" class="form-control " value="" style="width:200px" name="end_date" id="end_date" placeholder="@Dcm.Source.GlobalHelper.GetGlobalResource("enddate")">
+                                                </td>
+                                                <td style="vertical-align:top">
+                                                    <span class="input-group-addon" style="height:33px"><i class="fa fa-calendar"></i></span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("address")</label>
+                                </div>
+                                <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 form-validate">
+                                    <textarea name="address" id="address" required="required" cols="50" rows="4" class="form-control">@Model.address</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("note")</label>
+                                </div>
+                                <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 form-validate">
+                                    <textarea name="note" id="note" cols="50" rows="4" class="form-control">@Model.note</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("isactive")</label>
+                                </div>
+                                <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
+                                    <input type="checkbox" id="chk_is_active" name="chk_is_active">
+                                    <input type="hidden" id="is_active" name="is_active">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-sm-6 col-sm-offset-3">
+                                    <div class="btn-toolbar">
+                                        @if(Dcm.Source.GlobalHelper.IsAuthorized(Model.MenuId,"update_right",BaseDB.SessionContext.Current.ActiveUser.UserUid.ToString()))
+                                        {
+                                        <input type="submit" class="btn-primary btn" value="Kaydet" onclick="Update()" />
+                                        }
+                                        
+                                        @if (Model.RecordId != "" && Model.RecordId != Guid.Empty.ToString() && Dcm.Source.GlobalHelper.IsAuthorized(Model.MenuId, "delete_right", BaseDB.SessionContext.Current.ActiveUser.UserUid.ToString()))
+                                        {
+                                        <input type="button" class="btn-danger btn" value="Sil" onclick="Delete()" />
+                                        }
+                                        @*<button class="btn-default btn">Cancel</button>*@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div><!-- container -->
+    </div>
+
+    <input type="hidden" id="FromDeleteButton" name="FromDeleteButton" />
+}
+
+<style>
+    .table-bordered > tbody > tr > td {
+        padding: 5px;
+        line-height: 1.428571429;
+        vertical-align: top;
+        border-top: 1px solid #e6e7e8;
+    }
+
+    #wrap > .container {
+        padding: 10px;
+    }
+
+    #wrap {
+        margin-top: 0px;
+    }
+</style>
+<script type='text/javascript' src='~/assets/plugins/datatables/jquery.dataTables.min.js'></script>
+<script type='text/javascript' src='~/assets/plugins/datatables/dataTables.bootstrap.js'></script>
+
+<script>
+    $(document).ready(function () {
+        $('#birth_date').datepicker({
+            format: 'dd/mm/yyyy',
+        });
+        $('#end_date').datepicker({
+            format: 'dd/mm/yyyy',
+        });
+        $('#start_date').datepicker({
+            format: 'dd/mm/yyyy',
+        });
+
+        if ('@Model.birth_date.Year' != "1") {
+            var birthDate = new Date('@Model.birth_date.Year', '@(Model.birth_date.Month-1)', '@Model.birth_date.Day', '0', '0', '0', '0');
+            $('#birth_date').datepicker('setDate', birthDate);
+        }
+
+        if ('@Model.start_date.Year' != "1") {
+            var startDate = new Date('@Model.start_date.Year', '@(Model.start_date.Month-1)', '@Model.start_date.Day', '0', '0', '0', '0');
+            $('#start_date').datepicker('setDate', startDate);
+        }
+
+
+        if ('@Model.end_date.Year' != "1") {
+            var endDate = new Date('@Model.end_date.Year', '@(Model.end_date.Month-1)', '@Model.end_date.Day', '0', '0', '0', '0');
+            $('#end_date').datepicker('setDate', endDate);
+        }
+
+        if ('@Model.is_active' == 'True' || '@Model.is_active' == 'true' || '@Model.is_active' == 'TRUE') {
+            $("#chk_is_active").prop('checked', true);
+        }
+
+
+    });
+
+    function Update() {
+        if ($("#chk_is_active").prop('checked') == true) {
+            $("#is_active").val("true");
+        }
+
+        var isValid = $('#validate-form').parsley().validate();
+
+        if (!isValid) {
+            $('#message_div').hide()
+        }
+
+    }
+
+    function Delete() {
+
+        bootbox.confirm('@Resources.GlobalResource.are_you_sure_to_delete', function (result) {
+            if (result) {
+                $("#FromDeleteButton").val("1");
+                $("#validate-form").parsley().destroy();
+                $("#validate-form").submit();
+            }
+        });
+        
+    }
+</script>

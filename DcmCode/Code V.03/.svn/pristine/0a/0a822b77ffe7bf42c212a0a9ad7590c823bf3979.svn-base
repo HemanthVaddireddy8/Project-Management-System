@@ -1,0 +1,11 @@
+﻿@model Dcm.Models.TreeNode
+
+@if (Model.Children.Count > 0)
+{
+    <ul class="acc-menu">
+        @foreach (var node in Model.Children)
+{
+    <li id="@node.MenuId"><a href="@(node.OnlyDetailPage == "1" ? @Url.Content(node.DetailPageUrl + "?MenuId=" + @node.MenuId) : Url.Content("~/General/ListPage?MenuId=" + @node.MenuId))"><span>@node.Name</span></a></li>
+}
+    </ul>
+}

@@ -1,0 +1,170 @@
+﻿@using ReportViewerForMvc;
+@model Dcm.Models.TaskReport
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@{
+    ViewBag.Title = "Rapor";
+}
+
+@using (Html.BeginForm("TaskReport", "Report", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data", data_validate = "parsley", novalidate = "", id = "report-form" }))
+{
+ 
+ <input type="hidden" name="MenuId" id="MenuId" value="@Model.MenuId" />
+    <div id='wrap'>
+        <div id="page-heading" style="
+    margin-top: -15px;
+">
+
+            <h3>Task Status Report</h3>
+
+            <div class="options">
+                <div class="btn-toolbar">
+
+                </div>
+            </div>
+
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-primary" style="height:560px">
+                        <div class="panel-heading">
+                            <h4>Report</h4>
+
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                    <select class="form-control" style="width:100%" name="task_status_id" id="ddlTaskStatus">
+                                        <option value="0" @(Model.task_status_id == "0" ? "selected" : "")>All</option>
+                                        @foreach (var item in Model.taskStatus)
+                                        {
+                                            <option value="@item.task_status_id" @(Model.task_status_id == item.task_status_id.ToString() ? "selected" : "")>@item.task_status_name</option>
+                                        }
+                                    </select>
+
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 form-validate">
+                                    <input type="hidden" id="assigned_user_id" name="assigned_user_id">
+                                    @if (Dcm.Source.GlobalHelper.IsAuthorized("110", "menu_right", BaseDB.SessionContext.Current.ActiveUser.UserUid.ToString()))
+                                    { 
+                                    <select class="form-control" style="width: 100%; " id="ddlTaskAssignedUser" >
+                                        <option value="0">All Users</option>
+                                        @foreach (var item in Model.activeUsers)
+                                        {
+                                            <option value="@item.user_id" @(Model.assigned_user_id == item.user_id.ToString() ? "selected" : "")>@item.name @item.surname</option>
+                                        }
+                                    </select>
+                                    }
+                                    else
+                                    {
+                                        <select class="form-control" style="width: 100%; " id="ddlTaskAssignedUser" disabled>
+                                        @foreach (var item in Model.activeUsers)
+                                        {
+                                            <option value="@item.user_id" @(Model.assigned_user_id == item.user_id.ToString() ? "selected" : "")>@item.name @item.surname</option>
+                                        }
+                                    </select>
+                                        
+                                    }
+                                    
+
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3  col-xs-12 form-validate">
+
+                                    <div class="input-group date">
+                                        <table>
+                                            <tr>
+                                                <td style="vertical-align:top" class="form-validate">
+                                                    <input type="text" class="form-control " value="" style="width:200px" name="start_date" id="start_date" placeholder="@Dcm.Source.GlobalHelper.GetGlobalResource("start_date")">
+                                                </td>
+                                                <td style="vertical-align:top">
+                                                    <span class="input-group-addon" style="height:33px"><i class="fa fa-calendar"></i></span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3  col-xs-12 form-validate">
+
+                                    <div class="input-group date">
+                                        <table>
+                                            <tr>
+                                                <td style="vertical-align:top" class="form-validate">
+                                                    <input type="text" class="form-control " value="" style="width:200px" name="end_date" id="end_date" placeholder="@Dcm.Source.GlobalHelper.GetGlobalResource("end_date")">
+                                                </td>
+                                                <td style="vertical-align:top">
+                                                    <span class="input-group-addon" style="height:33px"><i class="fa fa-calendar"></i></span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2  col-xs-12 form-validate">
+
+                                    <input type="button" style="margin-left:30px" class="btn-success btn" value="Get" onclick="Update()" />
+                                </div>
+
+                            </div>
+                            <div>
+                                @Html.ReportViewer(ViewBag.ReportViewer as Microsoft.Reporting.WebForms.ReportViewer, new { scrolling = "no", width = "100%", height = "100%" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        }
+
+        <style>
+            #wrap > .container {
+                padding: 10px;
+            }
+
+            #wrap {
+                margin-top: 0px;
+            }
+        </style>
+
+        <script>
+    $(document).ready(function () {
+
+        $('#end_date').datepicker({
+            format: 'dd/mm/yyyy'
+        });
+        $('#start_date').datepicker({
+            format: 'dd/mm/yyyy'
+        });
+
+        
+        if ('@Model.start_date.Year' != "1") {
+            
+            var startDate = new Date('@Model.start_date.Year', '@(Model.start_date.Month-1)', '@Model.start_date.Day', '0', '0', '0', '0');
+            $('#start_date').datepicker('setDate', startDate);
+        }
+
+
+        if ('@Model.end_date.Year' != "1") {
+            var endDate = new Date('@Model.end_date.Year', '@(Model.end_date.Month-1)', '@Model.end_date.Day', '0', '0', '0', '0');
+            $('#end_date').datepicker('setDate', endDate);
+        }
+
+
+    });
+
+            function Update() {
+                $('#assigned_user_id').val($('#ddlTaskAssignedUser').val());
+                $("#report-form").submit();
+            }
+
+   
+  
+        </script>

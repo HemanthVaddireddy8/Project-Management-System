@@ -1,0 +1,74 @@
+﻿using Dcm.Models;
+using Dcm.Source;
+using Gunluk.EntityModels;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Dcm.EntityModels;
+
+namespace Dcm.Controllers
+{
+    public class UsersController : Controller
+    {
+        [AllowAnonymous]
+        public ActionResult Role(int RecordId)
+        {
+            return View();
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult ListPage()
+        {
+            DataSet ds = new DataSet();
+            return View(ds);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult User(string RecordId,string MenuId )
+        {
+            User model = new User();
+
+            model.RecordId = RecordId;
+            model.MenuId = MenuId;
+            
+            Guid recordId = Guid.Empty;
+
+            if (GlobalHelper.IsGuid(model.RecordId))
+            {
+                recordId = Guid.Parse(model.RecordId);
+                
+            }
+
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult User(User model)
+        {
+            Guid recordId = Guid.Empty;
+
+            if (GlobalHelper.IsGuid(model.RecordId))
+            {
+                recordId = Guid.Parse(model.RecordId);
+            }
+            else
+            {
+                GenelRepository gnlDB = RepositoryManager.GetRepository<GenelRepository>();
+
+                gnl_users user = new gnl_users();
+                gnlDB.AddUser(user, model);
+                gnlDB.Kaydet();
+                model.RecordId = user.user_id.ToString();
+            }
+           
+            return View(model);
+        }
+    }
+}

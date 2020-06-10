@@ -1,0 +1,40 @@
+﻿<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Aktivasyon</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+</head>
+
+<body>
+
+<div style="background-color:#ffffff;border:1px solid #ffffff;width:800px;font-family:Verdana">
+  <table width="800" border="0" cellspacing="0" cellpadding="3" style="background-color: #E1E1E1; border: 1px solid #595F69; width: 800px; font-family: Verdana; ">
+    <tr>
+      <td bgcolor="#ffffff"><div style="padding:30px;"><a  href="%%path_url%%" style="font: normal 40px Georgia, 'Times New Roman', Times, serif; text-decoration: none; color: #595F69;">
+                            Dcm Grup</a></div></td>
+    </tr>
+    <tr>
+      <td ><div style="padding:50px">
+          <div style="font-size:18px;">Merhaba %%ad%%, </div>
+          <br />
+          <div style="font-size:18px;">%%task_no%% nolu ve '%%task_name%%' isimli görevin durumu '%%task_date%%' tarihinde '%%task_status_name%%' olarak değiştirilmiştir.</div>
+          <br />
+               <br />
+               
+          <div style="font-size:18px;"><a href="%%task_link%%"> Görev Linki </a></div>
+          <br />
+          <br />
+          <div style="margin-top:70px;" >
+            <table width="350" border="0" cellspacing="0" cellpadding="3">
+              <tr>
+                <td width="206"><a style="color:#000000;text-decoration:underline;font-size:12px;" href="%%path_url%%">Dcm Grup</a></td>
+                
+              </tr>
+            </table>
+          </div>
+        </div></td>
+    </tr>
+  </table>
+</div>
+</body>
+</html>

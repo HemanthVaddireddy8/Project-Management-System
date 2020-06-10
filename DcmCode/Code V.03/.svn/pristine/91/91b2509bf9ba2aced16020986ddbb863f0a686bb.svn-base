@@ -1,0 +1,311 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Data;
+using System.Security.Cryptography;
+using System.Web;
+using BaseDB;
+using System.Web.Security;
+
+namespace BaseClasses
+{
+    public class BaseLogin
+    {
+        DataTable userTable;
+        DataTable uyeTable; 
+        public bool UserValidaton(string email, string passWord)
+        {
+            using (BaseDB.BaseDataAccess baseDataAccess = new BaseDB.BaseDataAccess())
+            {
+                using (BaseDB.BaseAdapter adapter = new BaseDB.BaseAdapter())
+                {
+                    string encriptedPassword = this.EncriptText(passWord);
+
+                    System.Text.Encoding enc = System.Text.Encoding.ASCII;
+                    byte[] byteArray = enc.GetBytes(encriptedPassword);
+
+                    BaseCommand cmd = new BaseCommand(baseDataAccess.MsConn);
+                    cmd.CommandType = System.Data.CommandType.Text;
+                    cmd.CommandText = "Select * From gnl_kullanicilar Where email=@email And sifre=@sifre And aktif = 1";
+                    adapter.SelectCommand = cmd.Command;
+                    adapter.SelectCommand.Parameters.AddWithValue("email", email);
+                    adapter.SelectCommand.Parameters.AddWithValue("sifre", byteArray);
+
+                    DataSet userDataSet = new DataSet();
+                    adapter.Fill(userDataSet, "Table");
+
+                    userTable = userDataSet.Tables[0];
+                
+                    return userTable.Rows.Count == 1;
+                }
+            }
+        }
+
+        public bool UserValidatonWithAktivasyonKey(string email, string passWord,string key)
+        {
+            using (BaseDB.BaseDataAccess baseDataAccess = new BaseDB.BaseDataAccess())
+            {
+                using (BaseDB.BaseAdapter adapter = new BaseDB.BaseAdapter())
+                {
+                    string encriptedPassword = this.EncriptText(passWord);
+
+                    System.Text.Encoding enc = System.Text.Encoding.ASCII;
+                    byte[] byteArray = enc.GetBytes(encriptedPassword);
+
+                    BaseCommand cmd = new BaseCommand(baseDataAccess.MsConn);
+                    cmd.CommandType = System.Data.CommandType.Text;
+                    cmd.CommandText = "Select * From gnl_kullanicilar Where email=@email And sifre=@sifre And (aktif = 1 or aktif is null) and aktivasyon_key='"+key+"'";
+                    adapter.SelectCommand = cmd.Command;
+                    adapter.SelectCommand.Parameters.AddWithValue("email", email);
+                    adapter.SelectCommand.Parameters.AddWithValue("sifre", byteArray);
+
+                    DataSet userDataSet = new DataSet();
+                    adapter.Fill(userDataSet, "Table");
+
+                    userTable = userDataSet.Tables[0];
+
+                   
+                    return userTable.Rows.Count == 1;
+                }
+            }
+        }
+
+        public bool UserValidatonWithFacebook(string email, bool facebook)
+        {
+            bool result=false;
+            if (facebook)
+            {
+                using (BaseDB.BaseDataAccess baseDataAccess = new BaseDB.BaseDataAccess())
+                {
+                    using (BaseDB.BaseAdapter adapter = new BaseDB.BaseAdapter())
+                    {
+                        
+                        BaseCommand cmd = new BaseCommand(baseDataAccess.MsConn);
+                        cmd.CommandType = System.Data.CommandType.Text;
+                        cmd.CommandText = "Select * From gnl_kullanicilar Where email=@email";
+                        adapter.SelectCommand = cmd.Command;
+                        adapter.SelectCommand.Parameters.AddWithValue("email", email);
+                        
+                        DataSet userDataSet = new DataSet();
+                        adapter.Fill(userDataSet, "Table");
+
+                        userTable = userDataSet.Tables[0];
+
+                        if (userTable.Rows.Count == 1) result = true;
+                    }
+                }
+            }
+
+
+            return result;
+        }
+
+        public bool UserValidatonWithUserId(Guid user_id)
+        {
+            bool result = false;
+           
+                using (BaseDB.BaseDataAccess baseDataAccess = new BaseDB.BaseDataAccess())
+                {
+                    using (BaseDB.BaseAdapter adapter = new BaseDB.BaseAdapter())
+                    {
+
+                        BaseCommand cmd = new BaseCommand(baseDataAccess.MsConn);
+                        cmd.CommandType = System.Data.CommandType.Text;
+                        cmd.CommandText = "Select * From gnl_kullanicilar Where user_uid=@user_id";
+                        adapter.SelectCommand = cmd.Command;
+                        adapter.SelectCommand.Parameters.AddWithValue("user_id", user_id);
+
+                        DataSet userDataSet = new DataSet();
+                        adapter.Fill(userDataSet, "Table");
+
+                        userTable = userDataSet.Tables[0];
+
+                        if (userTable.Rows.Count == 1) result = true;
+                    }
+                }
+        
+
+            return result;
+        }
+
+        public bool LoginFromRememberMe(string user_uid)
+        {
+            bool result = false;
+            Guid try_guid = new Guid();
+
+            if (Guid.TryParse(user_uid, out try_guid))
+            {
+                if (UserValidatonWithUserId(try_guid))
+                {
+                    
+                    SessionContext newSession = SessionContext.StartSession();
+                    newSession.LoginUser.UserUid = try_guid;
+                    newSession.LoginUser.UserUid = this.GetUserUid();
+                    newSession.LoginUser.UserNameAndSurname = this.GetUserNameAndSurName();
+                    newSession.LoginUser.UserEmail = this.GetEmail();
+                    newSession.LoginUser.Name = this.GetName();
+                    newSession.LoginUser.Surname = this.GetSurname();
+                    newSession.LoginUser.PublicUserName = this.GetPublicUsername();
+                    newSession.LoginUser.IsSistemAdmin = this.GetUserAdminType();
+                    newSession.LoginUser.TimeZoneInfoUser = this.GetTimeZoneInfoUser();
+                    newSession.LoginUser.CountryId = this.GetCountryId();
+                    newSession.LoginUser.ThemeColorCode = this.GetThemeId();
+
+
+
+                    BaseClasses.SessionKeeper.AddCurrentSession();
+                   
+                    FormsAuthentication.SetAuthCookie(newSession.ActiveUser.UserUid.ToString(), false);
+                    result = true;
+                }
+            }
+
+            return result;
+        }
+
+        public Guid GetUserUid()
+        {
+            Guid resultStr = Guid.Empty;
+            
+            if (userTable.Rows.Count != 0)
+            {
+                if (userTable.Rows[0]["user_uid"] != System.DBNull.Value && userTable.Rows[0]["user_uid"].ToString()!="") resultStr = Guid.Parse(userTable.Rows[0]["user_uid"].ToString());
+            }
+
+            return resultStr;
+        }
+        public string GetEmail()
+        {
+            string resultStr = "";
+            if (userTable.Rows.Count != 0)
+            {
+                if (userTable.Rows[0]["email"] != System.DBNull.Value && userTable.Rows[0]["email"].ToString() != "") resultStr = userTable.Rows[0]["email"].ToString();
+            }
+            return resultStr;
+        }
+
+        public string GetPublicUsername()
+        {
+            string resultStr = "";
+            if (userTable.Rows.Count != 0)
+            {
+                if (userTable.Rows[0]["user_name"] != System.DBNull.Value && userTable.Rows[0]["user_name"].ToString() != "") resultStr = userTable.Rows[0]["user_name"].ToString();
+            }
+            return resultStr;
+        }
+
+        public TimeZoneInfo GetTimeZoneInfoUser()
+        {
+            string resultStr = "";
+            if (userTable.Rows.Count != 0)
+            {
+                if (userTable.Rows[0]["time_zone"] != System.DBNull.Value && userTable.Rows[0]["time_zone"].ToString() != "") resultStr = userTable.Rows[0]["time_zone"].ToString();
+            }
+
+            TimeZoneInfo objTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(resultStr);
+
+            return objTimeZoneInfo;
+        }
+
+        public string GetCountryId()
+        {
+            string resultStr = "";
+            if (userTable.Rows.Count != 0)
+            {
+                if (userTable.Rows[0]["country_id"] != System.DBNull.Value && userTable.Rows[0]["country_id"].ToString() != "") resultStr = userTable.Rows[0]["country_id"].ToString();
+            }
+            return resultStr;
+        }
+
+        public string GetThemeId()
+        {
+            string resultStr = "";
+            if (userTable.Rows.Count != 0)
+            {
+                if (userTable.Rows[0]["theme_color"] != System.DBNull.Value && userTable.Rows[0]["theme_color"].ToString() != "") resultStr = userTable.Rows[0]["theme_color"].ToString();
+            }
+            return resultStr;
+        }
+
+        public string GetUserNameAndSurName()
+        {
+            string resultStr = "";
+            if (userTable.Rows.Count != 0)
+            {
+                if (userTable.Rows[0]["ad"] != System.DBNull.Value && userTable.Rows[0]["ad"].ToString() != "" && userTable.Rows[0]["soyad"] != System.DBNull.Value && userTable.Rows[0]["soyad"].ToString() != "") resultStr = userTable.Rows[0]["ad"].ToString() + " " + userTable.Rows[0]["soyad"].ToString();
+            }
+            return resultStr;
+        }
+
+        public string GetName()
+        {
+            string resultStr = "";
+            if (userTable.Rows.Count != 0)
+            {
+                if (userTable.Rows[0]["ad"] != System.DBNull.Value && userTable.Rows[0]["ad"].ToString() != "" ) resultStr = userTable.Rows[0]["ad"].ToString() ;
+            }
+            return resultStr;
+        }
+
+        public string GetFacebookId()
+        {
+            string resultStr = "";
+            if (userTable.Rows.Count != 0)
+            {
+                if (userTable.Rows[0]["facebook_id"] != System.DBNull.Value && userTable.Rows[0]["facebook_id"].ToString() != "") resultStr = userTable.Rows[0]["facebook_id"].ToString();
+            }
+            return resultStr;
+        }
+
+        public string GetSurname()
+        {
+            string resultStr = "";
+            if (userTable.Rows.Count != 0)
+            {
+                if (userTable.Rows[0]["soyad"] != System.DBNull.Value && userTable.Rows[0]["soyad"].ToString() != "") resultStr = userTable.Rows[0]["soyad"].ToString();
+            }
+            return resultStr;
+        }
+       
+
+        public bool GetUserAdminType()
+        {
+            bool resultStr = false;
+            if (userTable.Rows.Count != 0)
+            {
+                if (userTable.Rows[0]["is_sistem_admin"] != System.DBNull.Value && userTable.Rows[0]["is_sistem_admin"].ToString() != "" && (userTable.Rows[0]["is_sistem_admin"].ToString()=="true" || userTable.Rows[0]["is_sistem_admin"].ToString()=="True") ) resultStr = true;
+            }
+            return resultStr;
+        }
+
+
+        public string EncriptText(string text)
+        {
+            MD5CryptoServiceProvider md5Hasher = new MD5CryptoServiceProvider();
+            byte[] hashedDataBytes;
+            UTF8Encoding encoder = new UTF8Encoding();
+            hashedDataBytes = md5Hasher.ComputeHash(encoder.GetBytes(text));
+            string encriptedPassword = Convert.ToBase64String(hashedDataBytes);
+            return encriptedPassword;
+        }
+
+        public bool ByteArrayCompare(byte[] a1, byte[] a2)
+        {
+            if (a1.Length != a2.Length)
+                return false;
+
+            for (int i = 0; i < a1.Length; i++)
+                if (a1[i] != a2[i])
+                    return false;
+
+            return true;
+        }
+
+        public bool PasswordControl(string password)
+        {
+            return this.UserValidaton(BaseDB.SessionContext.Current.ActiveUser.UserName, password);
+        }
+
+    }
+}

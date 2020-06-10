@@ -1,0 +1,127 @@
+﻿using Dcm.Models;
+using Dcm.Source;
+using Gunluk.EntityModels;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Dcm.EntityModels;
+using BaseDB;
+using Dcm.Filters;
+using System.Web.Script.Serialization;
+using BaseClasses;
+
+namespace Dcm.Controllers
+{
+    public class CrmController : Controller
+    {
+
+        #region Kurum İşlemleri
+        [HttpGet]
+        [AllowAnonymous]
+        [SessionCheckAttribute]
+        public ActionResult Kurumlar(string RecordId,string MenuId )
+        {
+            CrmRepository crmDB = RepositoryManager.GetRepository<CrmRepository>();
+            Kurum model = new Kurum();
+
+            #region Ortak Set Edilecek Değerler  
+            model.RecordId = RecordId;
+            model.MenuId = MenuId;
+            SessionContext.Current.ActiveUser.MenuId = MenuId;
+            #endregion
+
+            Guid recordId = Guid.Empty;
+
+
+            if (GlobalHelper.IsGuid(model.RecordId))
+            {
+                try
+                {
+                    recordId = Guid.Parse(model.RecordId);
+                    model = crmDB.BindKurum(model, recordId);
+                    ViewBag.ResultMessage = Resources.GlobalResource.transaction_success;
+                }
+                catch (Exception exp)
+                {
+                    ViewBag.Success = false;
+                    ModelState.AddModelError("Error", exp.Message);
+                }
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [SessionCheckAttribute]
+        public ActionResult Kurumlar(Kurum model)
+        {
+            Guid recordId = Guid.Empty;
+            CrmRepository crmDB = RepositoryManager.GetRepository<CrmRepository>();
+
+            #region Ortak Set Edilecek Değerler
+            SessionContext.Current.ActiveUser.MenuId = model.MenuId;
+            ViewBag.Success = true;
+            #endregion
+
+            ModelState.Remove("is_active");
+
+            if (model.FromDeleteButton == "1")
+            {
+                if (GlobalHelper.IsGuid(model.RecordId))
+                {
+                    crmDB.DeleteKurum(model, Guid.Parse(model.RecordId));
+                    return RedirectToAction("ListPage", "General", new { MenuId = model.MenuId });
+                }
+            }
+            else
+            {
+                if (ModelState.IsValid)
+                {
+                    if (GlobalHelper.IsGuid(model.RecordId))
+                    {
+                        recordId = Guid.Parse(model.RecordId);
+                        try
+                        {
+                            model = crmDB.UpdateKurum(model, recordId);
+                            ViewBag.ResultMessage = Resources.GlobalResource.transaction_success;
+                        }
+                        catch (Exception exp)
+                        {
+                            ViewBag.Success = false;
+                            ModelState.AddModelError("Error", exp.Message);
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            crm_kurumlar kurum = new crm_kurumlar();
+                            crmDB.AddKurum(kurum, model);
+                            model.RecordId = kurum.kurum_id.ToString();
+                            ViewBag.ResultMessage = Resources.GlobalResource.transaction_success;
+                        }
+                        catch (Exception exp)
+                        {
+                            ViewBag.Success = false;
+                            ModelState.AddModelError("Error", exp.Message);
+                        }
+                    }
+                }
+                else
+                {
+                    ViewBag.Success = false;
+                }
+            }
+
+            return View(model);
+        }
+        #endregion
+
+     
+
+    }
+}

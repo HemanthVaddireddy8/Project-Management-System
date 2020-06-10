@@ -1,0 +1,183 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Data;
+using System.Collections;
+using System.Globalization;
+using Dcm.EntityModels;
+using Dcm.Models;
+using BaseDB;
+using Dcm.Source;
+
+namespace Gunluk.EntityModels
+{
+    public class TaskRepository : BaseDB.BaseRepository<Dcm.EntityModels.TaskEntities>
+    {
+
+        #region Görev İşlemleri
+        public tsk_tasks GetTask(Guid task_id)
+        {
+            return db.tsk_tasks.SingleOrDefault(d => d.task_id == task_id);
+        }
+
+        public List<ref_tsk_task_priority> GetTaskPriorityList()
+        {
+            return db.ref_tsk_task_priority.ToList();
+        }
+
+        public List<ref_tsk_task_status> GetTaskStatusList()
+        {
+            return db.ref_tsk_task_status.ToList();
+        }
+
+
+        public void AddTask(tsk_tasks task, Task model)
+        {
+            task.task_id = Guid.NewGuid();
+
+            if (GlobalHelper.IsGuidOrEmpty(model.assigned_user_id))
+                task.assigned_user_id = Guid.Parse(model.assigned_user_id);
+
+            if (GlobalHelper.IsGuidOrEmpty(model.related_project_id))
+                task.related_project_id = Guid.Parse(model.related_project_id);
+
+            if (GlobalHelper.IsGuidOrEmpty(model.task_user_id))
+                task.task_user_id = Guid.Parse(model.task_user_id);
+
+
+            if (model.end_date != null && model.end_date != DateTime.MinValue && model.end_date.ToString() != "")
+                task.end_date = Convert.ToDateTime(model.end_date);
+
+            if (model.start_date != null && model.start_date != DateTime.MinValue && model.start_date.ToString() != "")
+                task.start_date = Convert.ToDateTime(model.start_date);
+
+            task.task_name = model.task_name;
+            task.task_description = model.task_description;
+            task.task_priority_id = Convert.ToInt32(model.task_priority_id);
+            task.task_status_id = Convert.ToInt32(model.task_status_id);
+            task.is_task_sent = false;
+
+            task.is_active = model.is_active;
+            db.tsk_tasks.Add(task);
+            this.Kaydet();
+        }
+
+        public Task BindTask(Task model, Guid recordId)
+        {
+            tsk_tasks task = new tsk_tasks();
+            task = this.GetTask(recordId);
+
+            model.task_name = task.task_name;
+            model.task_description = task.task_description;
+            model.task_priority_id = task.task_priority_id.ToString();
+            model.task_status_id = task.task_status_id.ToString();
+            model.explanations = task.explanations;
+            model.is_active = task.is_active.Value;
+            model.is_task_sent = task.is_task_sent.Value;
+            
+            if (task.related_project_id != null && GlobalHelper.IsGuidOrEmpty(task.related_project_id.ToString()))
+                model.related_project_id = task.related_project_id.ToString();
+
+            if (task.assigned_user_id != null && GlobalHelper.IsGuidOrEmpty(task.assigned_user_id.ToString()))
+                model.assigned_user_id = task.assigned_user_id.ToString();
+
+            if (task.task_user_id != null && GlobalHelper.IsGuidOrEmpty(task.task_user_id.ToString()))
+                model.task_user_id = task.task_user_id.ToString();
+
+            if (task.end_date != null)
+                model.end_date = task.end_date;
+            else
+                model.end_date = DateTime.MinValue;
+
+            if (task.start_date != null)
+                model.start_date = task.start_date;
+            else
+                model.start_date = DateTime.MinValue;
+
+            return model;
+        }
+
+        public Task UpdateTask(Task model, Guid recordId)
+        {
+            tsk_tasks task = new tsk_tasks();
+            task = this.GetTask(recordId);
+
+            task.task_name = model.task_name;
+            task.task_description = model.task_description;
+            task.task_priority_id = Convert.ToInt32(model.task_priority_id);
+            task.task_status_id = Convert.ToInt32(model.task_status_id);
+
+            task.is_active = model.is_active;
+
+            if (model.related_project_id != null && GlobalHelper.IsGuidOrEmpty(model.related_project_id))
+                task.related_project_id = Guid.Parse(model.related_project_id);
+
+            if (model.task_user_id != null && GlobalHelper.IsGuidOrEmpty(model.task_user_id))
+                task.task_user_id = Guid.Parse(model.task_user_id);
+
+            if (model.assigned_user_id != null && GlobalHelper.IsGuidOrEmpty(model.assigned_user_id))
+                task.assigned_user_id= Guid.Parse(model.assigned_user_id);
+
+             if (model.end_date != null && model.end_date != DateTime.MinValue && model.end_date.ToString() != "")
+                task.end_date = Convert.ToDateTime(model.end_date);
+
+            if (model.start_date != null && model.start_date != DateTime.MinValue && model.start_date.ToString() != "")
+                task.start_date = Convert.ToDateTime(model.start_date);
+            
+            task.updated_at = DateTime.UtcNow;
+            task.updated_by = SessionContext.Current.ActiveUser.UserUid;
+
+            this.Kaydet();
+            return model;
+        }
+
+        public Task UpdateTaskStatus(Task model, Guid recordId, int statusId,bool active=true)
+        {
+            tsk_tasks task = new tsk_tasks();
+            task = this.GetTask(recordId);
+
+            task.task_status_id = statusId;
+            task.is_task_sent = true;
+            task.is_active = active;
+
+            task.updated_at = DateTime.UtcNow;
+            task.updated_by = SessionContext.Current.ActiveUser.UserUid;
+
+            this.Kaydet();
+            return model;
+        }
+
+        public Task UpdateExplanation(Task model, Guid recordId)
+        {
+            tsk_tasks task = new tsk_tasks();
+            task = this.GetTask(recordId);
+
+            DateTime lclDateTime = BaseClasses.BaseFunctions.ToLocalTime(DateTime.UtcNow, BaseDB.SessionContext.Current.ActiveUser.TimeZoneInfoUser.Id);
+
+            if (model.new_explanation!=null && model.new_explanation.Trim() != "")
+                task.explanations = "~~~~ " + SessionContext.Current.ActiveUser.Name + " " + SessionContext.Current.ActiveUser.Surname + "  " + lclDateTime + " ~~~~\n" + model.new_explanation + "\n\r" + task.explanations;
+            
+            this.Kaydet();
+            return model;
+
+            
+        }
+
+        public Task DeleteTask(Task model, Guid recordId)
+        {
+            tsk_tasks task = new tsk_tasks();
+            task = this.GetTask(recordId);
+
+            task.is_deleted = true;
+            task.is_active = false;
+            task.deleted_at = DateTime.UtcNow;
+            task.deleted_by = SessionContext.Current.ActiveUser.UserUid;
+
+            this.Kaydet();
+            return model;
+        }
+        #endregion
+     
+    }
+}

@@ -1,0 +1,391 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="GenelModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="gnl_menu">
+          <Key>
+            <PropertyRef Name="menu_id" />
+          </Key>
+          <Property Name="menu_id" Type="int" Nullable="false" />
+          <Property Name="parent_menu_id" Type="int" />
+          <Property Name="name" Type="varchar" MaxLength="50" />
+          <Property Name="menu_order" Type="int" />
+          <Property Name="primary_key" Type="nvarchar" MaxLength="50" />
+          <Property Name="table_name" Type="nvarchar" MaxLength="50" />
+          <Property Name="object_name" Type="nvarchar" MaxLength="100" />
+          <Property Name="show_columns" Type="nvarchar" MaxLength="1000" />
+          <Property Name="detail_page_url" Type="nvarchar" MaxLength="250" />
+          <Property Name="detail_update_button" Type="smallint" />
+          <Property Name="detail_delete_button" Type="smallint" />
+          <Property Name="list_detail_button" Type="smallint" />
+          <Property Name="list_new_record_button" Type="smallint" />
+          <Property Name="show_in_menu" Type="smallint" />
+          <Property Name="filter" Type="nvarchar" MaxLength="2000" />
+          <Property Name="report_url" Type="nvarchar" MaxLength="100" />
+          <Property Name="only_detail_page" Type="nvarchar" MaxLength="2" />
+          <Property Name="icon_class" Type="nvarchar" MaxLength="100" />
+          <Property Name="hide_columns" Type="nvarchar" MaxLength="1000" />
+          <Property Name="order_by" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="gnl_role_rights">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="menu_id" Type="int" />
+          <Property Name="role_id" Type="uniqueidentifier" />
+          <Property Name="menu_right" Type="bit" />
+          <Property Name="update_right" Type="bit" />
+          <Property Name="delete_right" Type="bit" />
+          <Property Name="report_right" Type="bit" />
+        </EntityType>
+        <EntityType Name="gnl_roles">
+          <Key>
+            <PropertyRef Name="role_id" />
+          </Key>
+          <Property Name="role_id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="role_name" Type="nvarchar" MaxLength="50" />
+          <Property Name="role_explanation" Type="nvarchar" MaxLength="200" />
+          <Property Name="is_active" Type="bit" />
+          <Property Name="inserted_by" Type="uniqueidentifier" />
+          <Property Name="inserted_at" Type="datetime" />
+          <Property Name="updated_by" Type="uniqueidentifier" />
+          <Property Name="updated_at" Type="datetime" />
+          <Property Name="is_deleted" Type="bit" />
+          <Property Name="deleted_by" Type="uniqueidentifier" />
+          <Property Name="deleted_at" Type="datetime" />
+        </EntityType>
+        <EntityType Name="gnl_roles_related_users">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="role_id" Type="uniqueidentifier" />
+          <Property Name="user_id" Type="uniqueidentifier" />
+        </EntityType>
+        <EntityType Name="gnl_users">
+          <Key>
+            <PropertyRef Name="user_id" />
+          </Key>
+          <Property Name="user_id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="user_name" Type="nvarchar" MaxLength="50" />
+          <Property Name="password" Type="nvarchar" MaxLength="50" />
+          <Property Name="name" Type="nvarchar" MaxLength="50" />
+          <Property Name="second_name" Type="nvarchar" MaxLength="50" />
+          <Property Name="surname" Type="nvarchar" MaxLength="50" />
+          <Property Name="second_surname" Type="nvarchar" MaxLength="50" />
+          <Property Name="start_date" Type="datetime" />
+          <Property Name="end_date" Type="datetime" />
+          <Property Name="email" Type="nvarchar" MaxLength="100" />
+          <Property Name="identity_number" Type="nvarchar" MaxLength="50" />
+          <Property Name="mobile_phone" Type="nvarchar" MaxLength="50" />
+          <Property Name="home_phone" Type="nvarchar" MaxLength="50" />
+          <Property Name="adress" Type="nvarchar" MaxLength="2000" />
+          <Property Name="birth_date" Type="datetime" />
+          <Property Name="photo" Type="image" />
+          <Property Name="cropped_photo" Type="image" />
+          <Property Name="note" Type="nvarchar" MaxLength="4000" />
+          <Property Name="is_active" Type="bit" />
+          <Property Name="is_deleted" Type="bit" />
+          <Property Name="inserted_by" Type="uniqueidentifier" />
+          <Property Name="inserted_at" Type="datetime" />
+          <Property Name="updated_by" Type="uniqueidentifier" />
+          <Property Name="updated_at" Type="datetime" />
+          <Property Name="deleted_by" Type="uniqueidentifier" />
+          <Property Name="deleted_at" Type="datetime" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'DCM.dbo.gnl_role_related_users_v' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="gnl_role_related_users_v">
+          <Key>
+            <PropertyRef Name="role_id" />
+            <PropertyRef Name="user_id" />
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="role_id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="user_id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="role_name" Type="nvarchar" MaxLength="50" />
+          <Property Name="name" Type="nvarchar" MaxLength="50" />
+          <Property Name="surname" Type="nvarchar" MaxLength="50" />
+          <Property Name="email" Type="nvarchar" MaxLength="100" />
+          <Property Name="id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="GenelModelStoreContainer">
+          <EntitySet Name="gnl_menu" EntityType="Self.gnl_menu" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="gnl_role_rights" EntityType="Self.gnl_role_rights" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="gnl_roles" EntityType="Self.gnl_roles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="gnl_roles_related_users" EntityType="Self.gnl_roles_related_users" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="gnl_users" EntityType="Self.gnl_users" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="gnl_role_related_users_v" EntityType="Self.gnl_role_related_users_v" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [gnl_role_related_users_v].[role_id] AS [role_id], 
+    [gnl_role_related_users_v].[user_id] AS [user_id], 
+    [gnl_role_related_users_v].[role_name] AS [role_name], 
+    [gnl_role_related_users_v].[name] AS [name], 
+    [gnl_role_related_users_v].[surname] AS [surname], 
+    [gnl_role_related_users_v].[email] AS [email], 
+    [gnl_role_related_users_v].[id] AS [id]
+    FROM [dbo].[gnl_role_related_users_v] AS [gnl_role_related_users_v]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="GenelModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="gnl_users">
+          <Key>
+            <PropertyRef Name="user_id" />
+          </Key>
+          <Property Name="user_id" Type="Guid" Nullable="false" />
+          <Property Name="user_name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="second_name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="surname" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="second_surname" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="start_date" Type="DateTime" Precision="3" />
+          <Property Name="end_date" Type="DateTime" Precision="3" />
+          <Property Name="email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="identity_number" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="mobile_phone" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="home_phone" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="adress" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="birth_date" Type="DateTime" Precision="3" />
+          <Property Name="photo" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="cropped_photo" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="note" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <Property Name="is_active" Type="Boolean" />
+          <Property Name="is_deleted" Type="Boolean" />
+          <Property Name="inserted_by" Type="Guid" />
+          <Property Name="inserted_at" Type="DateTime" Precision="3" />
+          <Property Name="updated_by" Type="Guid" />
+          <Property Name="updated_at" Type="DateTime" Precision="3" />
+          <Property Name="deleted_by" Type="Guid" />
+          <Property Name="deleted_at" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityContainer Name="GenelEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="gnl_users" EntityType="Self.gnl_users" />
+          <EntitySet Name="gnl_menu" EntityType="GenelModel.gnl_menu" />
+          <EntitySet Name="gnl_roles_related_users" EntityType="GenelModel.gnl_roles_related_users" />
+          <EntitySet Name="gnl_role_related_users_v" EntityType="GenelModel.gnl_role_related_users_v" />
+          <EntitySet Name="gnl_role_rights" EntityType="GenelModel.gnl_role_rights" />
+          <EntitySet Name="gnl_roles" EntityType="GenelModel.gnl_roles" />
+        </EntityContainer>
+        <EntityType Name="gnl_menu">
+          <Key>
+            <PropertyRef Name="menu_id" />
+          </Key>
+          <Property Name="menu_id" Type="Int32" Nullable="false" />
+          <Property Name="parent_menu_id" Type="Int32" />
+          <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="menu_order" Type="Int32" />
+          <Property Name="primary_key" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="table_name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="object_name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="hide_columns" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="detail_page_url" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="detail_update_button" Type="Int16" />
+          <Property Name="detail_delete_button" Type="Int16" />
+          <Property Name="list_detail_button" Type="Int16" />
+          <Property Name="list_new_record_button" Type="Int16" />
+          <Property Name="show_in_menu" Type="Int16" />
+          <Property Name="filter" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="report_url" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="only_detail_page" Type="String" MaxLength="2" FixedLength="false" Unicode="true" />
+          <Property Name="icon_class" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="show_columns" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="order_by" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="gnl_roles_related_users">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="role_id" Type="Guid" />
+          <Property Name="user_id" Type="Guid" />
+        </EntityType>
+        <EntityType Name="gnl_role_related_users_v">
+          <Key>
+            <PropertyRef Name="role_id" />
+            <PropertyRef Name="user_id" />
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="role_id" Type="Guid" Nullable="false" />
+          <Property Name="user_id" Type="Guid" Nullable="false" />
+          <Property Name="role_name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="surname" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="id" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="gnl_role_rights">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="menu_id" Type="Int32" />
+          <Property Name="role_id" Type="Guid" />
+          <Property Name="menu_right" Type="Boolean" />
+          <Property Name="update_right" Type="Boolean" />
+          <Property Name="delete_right" Type="Boolean" />
+          <Property Name="report_right" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="gnl_roles">
+          <Key>
+            <PropertyRef Name="role_id" />
+          </Key>
+          <Property Name="role_id" Type="Guid" Nullable="false" />
+          <Property Name="role_name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="role_explanation" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="is_active" Type="Boolean" />
+          <Property Name="inserted_by" Type="Guid" />
+          <Property Name="inserted_at" Type="DateTime" Precision="3" />
+          <Property Name="updated_by" Type="Guid" />
+          <Property Name="updated_at" Type="DateTime" Precision="3" />
+          <Property Name="is_deleted" Type="Boolean" />
+          <Property Name="deleted_by" Type="Guid" />
+          <Property Name="deleted_at" Type="DateTime" Precision="3" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="GenelModelStoreContainer" CdmEntityContainer="GenelEntities">
+          <EntitySetMapping Name="gnl_users">
+            <EntityTypeMapping TypeName="GenelModel.gnl_users">
+              <MappingFragment StoreEntitySet="gnl_users">
+                <ScalarProperty Name="user_id" ColumnName="user_id" />
+                <ScalarProperty Name="user_name" ColumnName="user_name" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="second_name" ColumnName="second_name" />
+                <ScalarProperty Name="surname" ColumnName="surname" />
+                <ScalarProperty Name="second_surname" ColumnName="second_surname" />
+                <ScalarProperty Name="start_date" ColumnName="start_date" />
+                <ScalarProperty Name="end_date" ColumnName="end_date" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="identity_number" ColumnName="identity_number" />
+                <ScalarProperty Name="mobile_phone" ColumnName="mobile_phone" />
+                <ScalarProperty Name="home_phone" ColumnName="home_phone" />
+                <ScalarProperty Name="adress" ColumnName="adress" />
+                <ScalarProperty Name="birth_date" ColumnName="birth_date" />
+                <ScalarProperty Name="photo" ColumnName="photo" />
+                <ScalarProperty Name="cropped_photo" ColumnName="cropped_photo" />
+                <ScalarProperty Name="note" ColumnName="note" />
+                <ScalarProperty Name="is_active" ColumnName="is_active" />
+                <ScalarProperty Name="is_deleted" ColumnName="is_deleted" />
+                <ScalarProperty Name="inserted_by" ColumnName="inserted_by" />
+                <ScalarProperty Name="inserted_at" ColumnName="inserted_at" />
+                <ScalarProperty Name="updated_by" ColumnName="updated_by" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="deleted_by" ColumnName="deleted_by" />
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="gnl_menu">
+            <EntityTypeMapping TypeName="GenelModel.gnl_menu">
+              <MappingFragment StoreEntitySet="gnl_menu">
+                <ScalarProperty Name="order_by" ColumnName="order_by" />
+                <ScalarProperty Name="show_columns" ColumnName="show_columns" />
+                <ScalarProperty Name="icon_class" ColumnName="icon_class" />
+                <ScalarProperty Name="only_detail_page" ColumnName="only_detail_page" />
+                <ScalarProperty Name="report_url" ColumnName="report_url" />
+                <ScalarProperty Name="filter" ColumnName="filter" />
+                <ScalarProperty Name="show_in_menu" ColumnName="show_in_menu" />
+                <ScalarProperty Name="list_new_record_button" ColumnName="list_new_record_button" />
+                <ScalarProperty Name="list_detail_button" ColumnName="list_detail_button" />
+                <ScalarProperty Name="detail_delete_button" ColumnName="detail_delete_button" />
+                <ScalarProperty Name="detail_update_button" ColumnName="detail_update_button" />
+                <ScalarProperty Name="detail_page_url" ColumnName="detail_page_url" />
+                <ScalarProperty Name="hide_columns" ColumnName="hide_columns" />
+                <ScalarProperty Name="object_name" ColumnName="object_name" />
+                <ScalarProperty Name="table_name" ColumnName="table_name" />
+                <ScalarProperty Name="primary_key" ColumnName="primary_key" />
+                <ScalarProperty Name="menu_order" ColumnName="menu_order" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="parent_menu_id" ColumnName="parent_menu_id" />
+                <ScalarProperty Name="menu_id" ColumnName="menu_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="gnl_roles_related_users">
+            <EntityTypeMapping TypeName="GenelModel.gnl_roles_related_users">
+              <MappingFragment StoreEntitySet="gnl_roles_related_users">
+                <ScalarProperty Name="user_id" ColumnName="user_id" />
+                <ScalarProperty Name="role_id" ColumnName="role_id" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="gnl_role_related_users_v">
+            <EntityTypeMapping TypeName="GenelModel.gnl_role_related_users_v">
+              <MappingFragment StoreEntitySet="gnl_role_related_users_v">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="surname" ColumnName="surname" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="role_name" ColumnName="role_name" />
+                <ScalarProperty Name="user_id" ColumnName="user_id" />
+                <ScalarProperty Name="role_id" ColumnName="role_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="gnl_role_rights">
+            <EntityTypeMapping TypeName="GenelModel.gnl_role_rights">
+              <MappingFragment StoreEntitySet="gnl_role_rights">
+                <ScalarProperty Name="report_right" ColumnName="report_right" />
+                <ScalarProperty Name="delete_right" ColumnName="delete_right" />
+                <ScalarProperty Name="update_right" ColumnName="update_right" />
+                <ScalarProperty Name="menu_right" ColumnName="menu_right" />
+                <ScalarProperty Name="role_id" ColumnName="role_id" />
+                <ScalarProperty Name="menu_id" ColumnName="menu_id" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="gnl_roles">
+            <EntityTypeMapping TypeName="GenelModel.gnl_roles">
+              <MappingFragment StoreEntitySet="gnl_roles">
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="deleted_by" ColumnName="deleted_by" />
+                <ScalarProperty Name="is_deleted" ColumnName="is_deleted" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="updated_by" ColumnName="updated_by" />
+                <ScalarProperty Name="inserted_at" ColumnName="inserted_at" />
+                <ScalarProperty Name="inserted_by" ColumnName="inserted_by" />
+                <ScalarProperty Name="is_active" ColumnName="is_active" />
+                <ScalarProperty Name="role_explanation" ColumnName="role_explanation" />
+                <ScalarProperty Name="role_name" ColumnName="role_name" />
+                <ScalarProperty Name="role_id" ColumnName="role_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

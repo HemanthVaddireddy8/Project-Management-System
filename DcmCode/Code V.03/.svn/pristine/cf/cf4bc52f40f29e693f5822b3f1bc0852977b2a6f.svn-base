@@ -1,0 +1,21 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Data;
+using System.Collections;
+using System.Globalization;
+using Dcm.EntityModels;
+using Dcm.Models;
+using BaseDB;
+using Dcm.Source;
+
+namespace Gunluk.EntityModels
+{
+    public class TaskRepository : BaseDB.BaseRepository<Dcm.EntityModels.TaskEntities>
+    {
+
+        
+     
+    }
+}

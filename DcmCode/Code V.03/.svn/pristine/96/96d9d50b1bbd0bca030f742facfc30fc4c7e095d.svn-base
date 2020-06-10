@@ -1,0 +1,110 @@
+﻿using Dcm.Models;
+using Dcm.Source;
+using Gunluk.EntityModels;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Dcm.EntityModels;
+
+namespace Dcm.Controllers
+{
+    public class UsersController : Controller
+    {
+        [AllowAnonymous]
+        public ActionResult Role(int RecordId)
+        {
+            return View();
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult ListPage()
+        {
+            DataSet ds = new DataSet();
+            return View(ds);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult User(string RecordId,string MenuId )
+        {
+            User model = new User();
+
+            model.RecordId = RecordId;
+            model.MenuId = MenuId;
+            
+            Guid recordId = Guid.Empty;
+
+            if (GlobalHelper.IsGuid(model.RecordId))
+            {
+                recordId = Guid.Parse(model.RecordId);
+                model = BindUser(model, recordId);
+            }
+
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult User(User model)
+        {
+            Guid recordId = Guid.Empty;
+
+            if (GlobalHelper.IsGuid(model.RecordId))
+            {
+                recordId = Guid.Parse(model.RecordId);
+                model = BindUser(model, recordId);
+            }
+            else
+            {
+                GenelRepository gnlDB = RepositoryManager.GetRepository<GenelRepository>();
+
+                gnl_users user = new gnl_users();
+                gnlDB.AddUser(user, model);
+                gnlDB.Kaydet();
+                model.RecordId = user.user_id.ToString();
+            }
+           
+            return View(model);
+        }
+
+        public User BindUser(User model,Guid recordId)
+        {
+            GenelRepository gnlDB = RepositoryManager.GetRepository<GenelRepository>();
+            gnl_users user = new gnl_users();
+            user = gnlDB.GetUser(recordId);
+
+            model.name = user.name;
+            model.surname = user.surname;
+            model.email = user.email;
+            model.address = user.adress;
+            model.mobile_phone = user.mobile_phone;
+            model.home_phone = user.home_phone;
+
+            model.identity_number = user.identity_number;
+            model.is_active = user.is_active.Value;
+            if (user.birth_date != null)
+                model.birth_date = user.birth_date.Value;
+            else
+                model.birth_date = DateTime.MinValue;
+
+            if (user.end_date!=null)
+                model.end_date = user.end_date.Value;
+            else
+                model.end_date=DateTime.MinValue;
+
+            if (user.start_date != null)
+                model.start_date = user.start_date.Value;
+            else
+                model.start_date=DateTime.MinValue;
+
+            model.note = user.note;
+
+            return model;
+        }
+    }
+}

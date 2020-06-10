@@ -1,0 +1,44 @@
+﻿using BaseDB;
+using Dcm.Filters;
+using Dcm.Models;
+using Dcm.Source;
+using Google.Apis.Drive.v2;
+using Google.Apis.Drive.v2.Data;
+using Gunluk.EntityModels;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Script.Serialization;
+using System.Web.Security;
+using Microsoft.Reporting.WebForms;
+
+namespace Dcm.Controllers
+{
+    public class ReportController : Controller
+    {
+        
+        public ActionResult TaskReport()
+        {
+            TaskRepository tskDB = RepositoryManager.GetRepository<TaskRepository>();
+            var totalActiveTasks = tskDB.GetTaskList();
+
+            ReportViewer reportViewer = new ReportViewer();
+            reportViewer.ProcessingMode = ProcessingMode.Local;
+
+            reportViewer.LocalReport.ReportPath = Request.MapPath(Request.ApplicationPath) + @"Report/TaskReport.rdlc";
+            reportViewer.LocalReport.DataSources.Add(new ReportDataSource("TaskReportDataSet", totalActiveTasks.Where(x=>x.task_status_id==6).ToList()));
+            reportViewer.Height = 500;
+            reportViewer.Width = 900;
+            reportViewer.AsyncRendering = false;
+            
+            ViewBag.ReportViewer = reportViewer;
+            return View();
+        }
+
+      
+    }
+}

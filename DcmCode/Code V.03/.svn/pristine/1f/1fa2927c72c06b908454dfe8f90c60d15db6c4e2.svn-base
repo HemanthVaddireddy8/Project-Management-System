@@ -1,0 +1,230 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Data;
+using System.Collections;
+using System.Globalization;
+using Dcm.EntityModels;
+using Dcm.Models;
+using BaseDB;
+using Dcm.Source;
+
+namespace Gunluk.EntityModels
+{
+    public class CrmRepository : BaseDB.BaseRepository<Dcm.EntityModels.CrmEntities>
+    {
+
+        #region Kurumlar İşlemleri
+        public crm_kurumlar GetKurum(Guid kurum_id)
+        {
+            return db.crm_kurumlar.SingleOrDefault(d => d.kurum_id == kurum_id);
+        }
+
+        public void AddKurum(crm_kurumlar kurum, Kurum model)
+        {
+            kurum.kurum_id = Guid.NewGuid();
+            kurum.kodu = model.kodu;
+            kurum.ticari_unvani = model.ticari_unvan;
+            kurum.eposta_adresi = model.eposta;
+            kurum.vergi_no = model.vergino;
+            kurum.vergi_dairesi = model.vergi_dairesi;
+            kurum.telefonu_1 = model.telefon1;
+            kurum.telefonu_2 = model.telefon2;
+            kurum.mobile_phone = model.mobile_phone;
+            kurum.faksi_1 = model.faks1;
+            kurum.faksi_2 = model.faks2;
+            kurum.kurulus_yili = model.kurulus_yili;
+            kurum.calisan_sayisi = model.calisan_sayisi;
+            kurum.adres = model.adres;
+            kurum.note = model.note;
+            kurum.web_sitesi = model.web_sitesi;
+            kurum.is_active = model.is_active;
+            kurum.is_deleted = false;
+
+            db.crm_kurumlar.Add(kurum);
+            this.Kaydet();
+        }
+
+        public Kurum BindKurum(Kurum model, Guid recordId)
+        {
+            crm_kurumlar kurum = new crm_kurumlar();
+            kurum = this.GetKurum(recordId);
+
+            model.kodu = kurum.kodu;
+            model.ticari_unvan = kurum.ticari_unvani;
+            model.eposta = kurum.eposta_adresi;
+            model.vergino = kurum.vergi_no;
+            model.vergi_dairesi = kurum.vergi_dairesi;
+            model.telefon1 = kurum.telefonu_1;
+            model.telefon2 = kurum.telefonu_2;
+            model.mobile_phone = kurum.mobile_phone;
+            model.faks1 = kurum.faksi_1;
+            model.faks2 = kurum.faksi_2;
+
+            if (kurum.kurulus_yili!=null)
+                model.kurulus_yili = kurum.kurulus_yili.Value;
+            
+            if (kurum.calisan_sayisi!=null)
+                model.calisan_sayisi = kurum.calisan_sayisi.Value;
+
+            model.adres = kurum.adres;
+            model.note = kurum.note;
+            model.web_sitesi = kurum.web_sitesi;
+            model.is_active = kurum.is_active.Value;
+
+
+            return model;
+        }
+
+        public Kurum UpdateKurum(Kurum model, Guid recordId)
+        {
+            crm_kurumlar kurum = new crm_kurumlar();
+            kurum = this.GetKurum(recordId);
+
+            kurum.kodu = model.kodu;
+            kurum.ticari_unvani = model.ticari_unvan;
+            kurum.eposta_adresi = model.eposta;
+            kurum.vergi_no = model.vergino;
+            kurum.vergi_dairesi = model.vergi_dairesi;
+            kurum.telefonu_1 = model.telefon1;
+            kurum.telefonu_2 = model.telefon2;
+            kurum.faksi_1 = model.faks1;
+            kurum.faksi_2 = model.faks2;
+            kurum.kurulus_yili = model.kurulus_yili;
+            kurum.calisan_sayisi = model.calisan_sayisi;
+            kurum.adres = model.adres;
+            kurum.note = model.note;
+            kurum.web_sitesi = model.web_sitesi;
+            kurum.is_active = model.is_active;
+            kurum.mobile_phone = model.mobile_phone;
+            
+            kurum.updated_at = DateTime.UtcNow;
+            kurum.updated_by = SessionContext.Current.ActiveUser.UserUid;
+
+            this.Kaydet();
+            return model;
+        }
+
+        public Kurum DeleteKurum(Kurum model, Guid recordId)
+        {
+            crm_kurumlar kurum = new crm_kurumlar();
+            kurum = this.GetKurum(recordId);
+
+            kurum.is_deleted = true;
+            kurum.is_active = false;
+            kurum.deleted_at = DateTime.UtcNow;
+            kurum.deleted_by = SessionContext.Current.ActiveUser.UserUid;
+
+            this.Kaydet();
+            return model;
+        }
+
+        public List<crm_kurumlar> GetKurumList()
+        {
+            return db.crm_kurumlar.Where(d => d.is_active == true).OrderBy(x => x.kodu).ToList();
+        }
+        #endregion
+
+        #region Bireyler İşlemleri
+        public crm_bireyler GetBirey(Guid birey_id)
+        {
+            return db.crm_bireyler.SingleOrDefault(d => d.birey_id == birey_id);
+        }
+
+        public void AddBirey(crm_bireyler birey, Birey model)
+        {
+            birey.birey_id = Guid.NewGuid();
+
+            if (GlobalHelper.IsGuidOrEmpty(model.calistigi_kurum_id))
+                birey.calistigi_kurum_id = Guid.Parse(model.calistigi_kurum_id);
+
+            birey.ad = model.ad;
+            birey.soyad = model.soyad;
+            birey.eposta_adresi = model.eposta_adresi;
+            birey.telefonu_1 = model.telefonu_1;
+            birey.telefonu_2 = model.telefonu_2;
+            birey.mobile_phone = model.mobile_phone;
+            birey.faksi_1 = model.faksi_1;
+            birey.faksi_2 = model.faksi_2;
+            birey.adres = model.adres;
+            birey.note = model.note;
+            birey.web_sitesi = model.web_sitesi;
+            birey.is_active = model.is_active;
+            birey.is_deleted = false;
+
+            db.crm_bireyler.Add(birey);
+            this.Kaydet();
+        }
+
+        public Birey BindBirey(Birey model, Guid recordId)
+        {
+            crm_bireyler birey = new crm_bireyler();
+            birey = this.GetBirey(recordId);
+
+            model.ad = birey.ad;
+            model.soyad = birey.soyad;
+            model.eposta_adresi = birey.eposta_adresi;
+            model.telefonu_1 = birey.telefonu_1;
+            model.telefonu_2 = birey.telefonu_2;
+            model.mobile_phone = birey.mobile_phone;
+            model.faksi_1 = birey.faksi_1;
+            model.faksi_2 = birey.faksi_2;
+            model.adres = birey.adres;
+            model.note = birey.note;
+            model.web_sitesi = birey.web_sitesi;
+            model.is_active = birey.is_active.Value;
+
+            if (birey.calistigi_kurum_id != null && GlobalHelper.IsGuidOrEmpty(birey.calistigi_kurum_id.ToString()))
+                model.calistigi_kurum_id = birey.calistigi_kurum_id.ToString();
+
+            return model;
+        }
+
+        public Birey UpdateBirey(Birey model, Guid recordId)
+        {
+            crm_bireyler birey = new crm_bireyler();
+            birey = this.GetBirey(recordId);
+
+            birey.ad = model.ad;
+            birey.soyad = model.soyad;
+            birey.eposta_adresi = model.eposta_adresi;
+            birey.telefonu_1 = model.telefonu_1;
+            birey.telefonu_2 = model.telefonu_2;
+            birey.faksi_1 = model.faksi_1;
+            birey.faksi_2 = model.faksi_2;
+            
+            birey.adres = model.adres;
+            birey.note = model.note;
+            birey.web_sitesi = model.web_sitesi;
+            birey.is_active = model.is_active;
+            birey.mobile_phone = model.mobile_phone;
+
+            if (model.calistigi_kurum_id != null && GlobalHelper.IsGuidOrEmpty(model.calistigi_kurum_id.ToString()))
+                birey.calistigi_kurum_id = Guid.Parse(model.calistigi_kurum_id);
+
+            birey.updated_at = DateTime.UtcNow;
+            birey.updated_by = SessionContext.Current.ActiveUser.UserUid;
+
+            this.Kaydet();
+            return model;
+        }
+
+        public Birey DeleteBirey(Birey model, Guid recordId)
+        {
+            crm_bireyler birey = new crm_bireyler();
+            birey = this.GetBirey(recordId);
+
+            birey.is_deleted = true;
+            birey.is_active = false;
+            birey.deleted_at = DateTime.UtcNow;
+            birey.deleted_by = SessionContext.Current.ActiveUser.UserUid;
+
+            this.Kaydet();
+            return model;
+        }
+        #endregion
+
+     
+    }
+}

@@ -1,0 +1,14 @@
+﻿@model Dcm.Models.TreeNode
+
+@if (Model.Children.Count > 0)
+{
+    <ul class="acc-menu">
+        @foreach (var node in Model.Children)
+        {
+            if (Dcm.Source.GlobalHelper.IsAuthorized(node.MenuId.ToString(),"menu_right",BaseDB.SessionContext.Current.ActiveUser.UserUid.ToString()))
+            { 
+    <li id="@node.MenuId"><a href="@(node.OnlyDetailPage == "1" ? @Url.Content(node.DetailPageUrl + "?MenuId=" + @node.MenuId) : Url.Content("~/General/ListPage?MenuId=" + Dcm.Source.GlobalHelper.Encrypt(@node.MenuId.ToString())))"><span>@node.Name</span></a></li>
+        }
+}
+    </ul>
+}

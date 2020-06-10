@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="TaskModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ref_tsk_task_priority">
+          <Key>
+            <PropertyRef Name="task_priority_id" />
+          </Key>
+          <Property Name="task_priority_id" Type="int" Nullable="false" />
+          <Property Name="task_priority_name" Type="nvarchar" MaxLength="200" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ref_tsk_task_status">
+          <Key>
+            <PropertyRef Name="task_status_id" />
+          </Key>
+          <Property Name="task_status_id" Type="int" Nullable="false" />
+          <Property Name="task_status_name" Type="nvarchar" MaxLength="200" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tsk_tasks">
+          <Key>
+            <PropertyRef Name="task_id" />
+          </Key>
+          <Property Name="task_id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="related_project_id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="task_user_id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="assigned_user_id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="task_type_id" Type="int" />
+          <Property Name="task_status_id" Type="int" Nullable="false" />
+          <Property Name="task_priority_id" Type="int" Nullable="false" />
+          <Property Name="task_name" Type="nvarchar" MaxLength="2000" Nullable="false" />
+          <Property Name="task_description" Type="nvarchar" MaxLength="4000" Nullable="false" />
+          <Property Name="note" Type="nvarchar" MaxLength="4000" />
+          <Property Name="start_date" Type="datetime" Nullable="false" />
+          <Property Name="end_date" Type="datetime" Nullable="false" />
+          <Property Name="is_task_sent" Type="bit" />
+          <Property Name="is_active" Type="bit" />
+          <Property Name="is_deleted" Type="bit" />
+          <Property Name="inserted_by" Type="uniqueidentifier" />
+          <Property Name="inserted_at" Type="datetime" />
+          <Property Name="updated_by" Type="uniqueidentifier" />
+          <Property Name="updated_at" Type="datetime" />
+          <Property Name="deleted_by" Type="uniqueidentifier" />
+          <Property Name="deleted_at" Type="datetime" />
+          <Property Name="task_closing_explanation" Type="nvarchar" MaxLength="4000" />
+        </EntityType>
+        <EntityContainer Name="TaskModelStoreContainer">
+          <EntitySet Name="ref_tsk_task_priority" EntityType="Self.ref_tsk_task_priority" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ref_tsk_task_status" EntityType="Self.ref_tsk_task_status" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tsk_tasks" EntityType="Self.tsk_tasks" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="TaskModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="TaskEntities" annotation:LazyLoadingEnabled="true" >
+          <EntitySet Name="ref_tsk_task_priority" EntityType="TaskModel.ref_tsk_task_priority" />
+          <EntitySet Name="ref_tsk_task_status" EntityType="TaskModel.ref_tsk_task_status" />
+          <EntitySet Name="tsk_tasks" EntityType="TaskModel.tsk_tasks" />
+        </EntityContainer>
+        <EntityType Name="ref_tsk_task_priority">
+          <Key>
+            <PropertyRef Name="task_priority_id" />
+          </Key>
+          <Property Name="task_priority_id" Type="Int32" Nullable="false" />
+          <Property Name="task_priority_name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="ref_tsk_task_status">
+          <Key>
+            <PropertyRef Name="task_status_id" />
+          </Key>
+          <Property Name="task_status_id" Type="Int32" Nullable="false" />
+          <Property Name="task_status_name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="tsk_tasks">
+          <Key>
+            <PropertyRef Name="task_id" />
+          </Key>
+          <Property Name="task_id" Type="Guid" Nullable="false" />
+          <Property Name="related_project_id" Type="Guid" Nullable="false" />
+          <Property Name="task_user_id" Type="Guid" Nullable="false" />
+          <Property Name="assigned_user_id" Type="Guid" Nullable="false" />
+          <Property Name="task_type_id" Type="Int32" />
+          <Property Name="task_status_id" Type="Int32" Nullable="false" />
+          <Property Name="task_priority_id" Type="Int32" Nullable="false" />
+          <Property Name="task_name" Type="String" Nullable="false" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="task_description" Type="String" Nullable="false" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <Property Name="note" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <Property Name="start_date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="end_date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="is_task_sent" Type="Boolean" />
+          <Property Name="is_active" Type="Boolean" />
+          <Property Name="is_deleted" Type="Boolean" />
+          <Property Name="inserted_by" Type="Guid" />
+          <Property Name="inserted_at" Type="DateTime" Precision="3" />
+          <Property Name="updated_by" Type="Guid" />
+          <Property Name="updated_at" Type="DateTime" Precision="3" />
+          <Property Name="deleted_by" Type="Guid" />
+          <Property Name="deleted_at" Type="DateTime" Precision="3" />
+          <Property Name="task_closing_explanation" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="TaskModelStoreContainer" CdmEntityContainer="TaskEntities" >
+          <EntitySetMapping Name="ref_tsk_task_priority">
+            <EntityTypeMapping TypeName="TaskModel.ref_tsk_task_priority">
+              <MappingFragment StoreEntitySet="ref_tsk_task_priority">
+                <ScalarProperty Name="task_priority_name" ColumnName="task_priority_name" />
+                <ScalarProperty Name="task_priority_id" ColumnName="task_priority_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ref_tsk_task_status">
+            <EntityTypeMapping TypeName="TaskModel.ref_tsk_task_status">
+              <MappingFragment StoreEntitySet="ref_tsk_task_status">
+                <ScalarProperty Name="task_status_name" ColumnName="task_status_name" />
+                <ScalarProperty Name="task_status_id" ColumnName="task_status_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tsk_tasks">
+            <EntityTypeMapping TypeName="TaskModel.tsk_tasks">
+              <MappingFragment StoreEntitySet="tsk_tasks">
+                <ScalarProperty Name="task_closing_explanation" ColumnName="task_closing_explanation" />
+                <ScalarProperty Name="deleted_at" ColumnName="deleted_at" />
+                <ScalarProperty Name="deleted_by" ColumnName="deleted_by" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="updated_by" ColumnName="updated_by" />
+                <ScalarProperty Name="inserted_at" ColumnName="inserted_at" />
+                <ScalarProperty Name="inserted_by" ColumnName="inserted_by" />
+                <ScalarProperty Name="is_deleted" ColumnName="is_deleted" />
+                <ScalarProperty Name="is_active" ColumnName="is_active" />
+                <ScalarProperty Name="is_task_sent" ColumnName="is_task_sent" />
+                <ScalarProperty Name="end_date" ColumnName="end_date" />
+                <ScalarProperty Name="start_date" ColumnName="start_date" />
+                <ScalarProperty Name="note" ColumnName="note" />
+                <ScalarProperty Name="task_description" ColumnName="task_description" />
+                <ScalarProperty Name="task_name" ColumnName="task_name" />
+                <ScalarProperty Name="task_priority_id" ColumnName="task_priority_id" />
+                <ScalarProperty Name="task_status_id" ColumnName="task_status_id" />
+                <ScalarProperty Name="task_type_id" ColumnName="task_type_id" />
+                <ScalarProperty Name="assigned_user_id" ColumnName="assigned_user_id" />
+                <ScalarProperty Name="task_user_id" ColumnName="task_user_id" />
+                <ScalarProperty Name="related_project_id" ColumnName="related_project_id" />
+                <ScalarProperty Name="task_id" ColumnName="task_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,12 @@
+﻿@model Dcm.Models.TreeNode
+
+@Model.Name
+@if (Model.Children.Count > 0)
+{
+<ul>
+    @foreach (var node in Model.Children)
+    { 
+        <li>@Html.DisplayFor(x => node)</li>
+    }
+</ul>
+}

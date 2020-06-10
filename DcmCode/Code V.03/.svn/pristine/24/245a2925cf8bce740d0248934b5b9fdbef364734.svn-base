@@ -1,0 +1,54 @@
+﻿
+<ul class="dropdown-menu notifications arrow" id="NotificationDropDown" style="width:400px">
+    <li class="dd-header">
+        <span>@(Session["ListNotification"] != null ? ((List<Dcm.EntityModels.gnl_notifications>)Session["ListNotification"]).Count + " bidiriminiz bulunmaktadır." : "")</span>
+        <span><a href="#"></a></span>
+    </li>
+    <div class="scrollthis">
+@if (Session["ListNotification"]!=null && ((List<Dcm.EntityModels.gnl_notifications>)Session["ListNotification"]) != null)
+                        {
+                            foreach (var item in ((List<Dcm.EntityModels.gnl_notifications>)Session["ListNotification"]))
+                            {
+        <li>
+            @if(item.notification_module_type==1)
+            {
+                Gunluk.EntityModels.TaskRepository tskDB = Gunluk.EntityModels.RepositoryManager.GetRepository<Gunluk.EntityModels.TaskRepository>();
+                var task = tskDB.GetTask(item.related_record_id.Value);
+                if (task!=null)
+                { 
+            <a href="@Url.Content("~/Task/Tasks?RecordId=" + item.related_record_id+"&MenuId="+@Dcm.Source.GlobalHelper.Encrypt("149")+"&FromNotification=1&NotificationId="+item.notification_id)" class="notification-danger active" style="text-decoration:underline">
+                <span class="time">@BaseClasses.BaseFunctions.ToLocalTime(item.notification_created_date.Value, BaseDB.SessionContext.Current.ActiveUser.TimeZoneInfoUser.Id);</span>
+                <i class="fa fa-calendar-o"></i>
+                <span class="msg">@item.notification_title @Url.Content(" (#" + task.order_id.ToString().PadLeft(5, '0') + ")")</span>
+            </a>
+            }
+            }
+        </li>
+}
+}
+else
+{ 
+<li>
+            <a href="#" class="notification-warning active">
+                <span class="time"></span>
+                <i class="fa fa-user"></i>
+                <span class="msg">Bildiriminiz bulunmamaktadır.</span>
+            </a>
+        </li>
+}
+        
+    </div>
+    @*<li class="dd-footer"><a href="#">View All Notifications</a></li>*@
+</ul>
+
+<script>
+    $(document).ready(function () {
+        
+    });
+
+   
+
+    
+</script>
+
+

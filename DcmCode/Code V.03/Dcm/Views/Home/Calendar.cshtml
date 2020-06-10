@@ -1,0 +1,75 @@
+﻿@model Dcm.Models.CalendarList
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    ViewBag.Title = "Calendar";
+}
+
+<div style="margin-top:-10px">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-danger calendar">
+                <div class="panel-heading">
+                    <h4>Calendar</h4>
+                    <div class="options">
+
+                    </div>
+                </div>
+                <div class="panel-body">
+                    
+                    <div id='calendar-drag'></div>
+                </div>
+            </div>
+        </div>
+
+
+        
+
+
+
+    </div>
+</div>
+
+
+<script>
+
+    $(document).ready(function () {
+        var events = [];
+        $('#calendar-drag').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            lang: 'tr',
+            selectable: true,
+            selectHelper: true,
+            editable: false,
+            monthNames: ["January", "February", "Marc", "April", "May","June", "July", "August", "September", "October", "November", "December"],
+            monthNamesShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            dayNamesShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+            events: "/Home/GetCalendar",
+            buttonText: {
+                prev: '<i class="fa fa-angle-left"></i>',
+                next: '<i class="fa fa-angle-right"></i>',
+                prevYear: '<i class="fa fa-angle-double-left"></i>',  // <<
+                nextYear: '<i class="fa fa-angle-double-right"></i>',  // >>
+                today: 'Today',
+                month: 'Monthly',
+                week: 'Weekly',
+                day: 'Daily'
+            }
+
+        });
+
+
+    });
+
+
+</script>
+
+

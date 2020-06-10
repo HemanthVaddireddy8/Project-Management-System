@@ -1,0 +1,137 @@
+﻿@model Dcm.Models.RoleAuthorization
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    ViewBag.Title = "Roller";
+}
+
+<link rel='stylesheet' type='text/css' href='~/assets/plugins/datatables/dataTables.css' />
+<link rel='stylesheet' type='text/css' href='~/assets/plugins/codeprettifier/prettify.css' />
+<link rel='stylesheet' type='text/css' href='~/assets/plugins/form-toggle/toggles.css' />
+<link rel='stylesheet' type='text/css' href="~/assets/plugins/jquery-autocomplete/styles.css" rel="stylesheet" />
+@using (Html.BeginForm("RoleAuthorization", "Users", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data", data_validate = "parsley", novalidate = "", id = "validate-form-authorization" }))
+{
+
+    <input type="hidden" name="MenuId" id="MenuId" value="@Model.MenuId" />
+    <div id='wrap'>
+        <div id="page-heading" style="
+    margin-top: -15px;
+">
+
+            <h3>Yetkilendirmeler</h3>
+
+            <div class="options">
+                <div class="btn-toolbar">
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="container">
+            <div id="message_div" class="alert alert-info" style="display:none;vertical-align:top">
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary()
+                @ViewBag.ResultMessage
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h4>Menü</h4>
+
+                        </div>
+
+                        <div class="panel-body">
+
+                            @if (Model.activeRoles != null && Model.activeRoles.Count > 0)
+                            {
+                                <select class="form-control" name="SelectedRoleId" id="ddlRoles" onchange="SelectRoles()">
+                                    @foreach (var item in Model.activeRoles)
+                                    {
+                                        <option value="@item.role_id" @(Model.SelectedRoleId == item.role_id.ToString() ? "selected" : "")>@item.role_name</option>
+                                    }
+                                </select>
+                            }
+                            <br />
+
+                            @{Html.RenderAction("MenuPartialMini", "Home");}
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-sm-12 col-sm-offset-5">
+                                    <div class="btn-toolbar">
+                                        <input type="submit" class="btn-primary btn" value="Kaydet" onclick="Update()" />
+                                        @*<button class="btn-default btn">Cancel</button>*@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+                <div class="col-sm-6">
+                    @*<div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h4>Alt Menü Yetkileri</h4>
+                            </div>
+                            <div class="panel-body">
+
+
+                            </div>
+
+
+                        </div>*@
+                </div>
+
+            </div>
+
+
+
+
+        </div><!-- container -->
+    </div>
+
+    <input type="hidden" id="FromUpdateButton" name="FromUpdateButton" />
+    
+}
+<style>
+    .table-bordered > tbody > tr > td {
+        padding: 5px;
+        line-height: 1.428571429;
+        vertical-align: top;
+        border-top: 1px solid #e6e7e8;
+    }
+
+    #wrap > .container {
+        padding: 10px;
+    }
+
+    #wrap {
+        margin-top: 0px;
+    }
+</style>
+<script type='text/javascript' src='~/assets/plugins/datatables/jquery.dataTables.min.js'></script>
+<script type='text/javascript' src='~/assets/plugins/datatables/dataTables.bootstrap.js'></script>
+
+<script>
+    $(document).ready(function () {
+
+    });
+
+    function Update() {
+        $("#FromUpdateButton").val("1");
+    }
+
+    function SelectRoles() {
+        $("#FromUpdateButton").val("0");
+        $("#validate-form-authorization").submit();
+    }
+
+</script>

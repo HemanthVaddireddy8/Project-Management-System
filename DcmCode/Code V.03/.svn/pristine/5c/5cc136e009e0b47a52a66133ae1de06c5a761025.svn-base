@@ -1,0 +1,193 @@
+﻿@model Dcm.Models.User
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    ViewBag.Title = "Profil";
+}
+
+<link rel='stylesheet' type='text/css' href='~/assets/plugins/datatables/dataTables.css' />
+<link rel='stylesheet' type='text/css' href='~/assets/plugins/codeprettifier/prettify.css' />
+<link rel='stylesheet' type='text/css' href='~/assets/plugins/form-toggle/toggles.css' />
+@using (Html.BeginForm("UserProfile", "Users", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data", data_validate = "parsley", novalidate = "", id = "validate-form" }))
+{
+    <input type="hidden" name="RecordId" id="RecordId" value="@Model.RecordId" />
+    <input type="hidden" name="MenuId" id="MenuId" value="@Model.MenuId" />
+    <div id='wrap'>
+        <div id="page-heading" style="
+    margin-top: -15px;
+">
+
+            <h3>Kullanıcı Profili / Şifre Değişikliği</h3>
+
+            <div class="options">
+                <div class="btn-toolbar">
+                    
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="container">
+            <div id="message_div" class="alert alert-info" style="display:none;vertical-align:top">
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary()
+                @ViewBag.ResultMessage
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h4>Detay</h4>
+
+                        </div>
+                        <div class="panel-body">
+
+                            <div class="form-group">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("name")</label>
+                                </div>
+
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <input type="text" class="form-control" name="name" disabled id="name" value="@Model.name" autocomplete="off" placeholder="@Dcm.Source.GlobalHelper.GetGlobalResource("name")">
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <p><label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("surname")</label></p>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <p><input type="text" name="surname" id="surname" disabled value="@Model.surname" class="form-control" autocomplete="off" placeholder="@Dcm.Source.GlobalHelper.GetGlobalResource("surname")"></p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("email")</label>
+                                </div>
+
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <input type="text" class="form-control" name="email" data-type="email" value="@Model.email" disabled id="email" autocomplete="off" placeholder="@Dcm.Source.GlobalHelper.GetGlobalResource("email")">
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("mobilephone")</label>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <input type="text" class="form-control mask" data-type="phone" disabled value="@Model.mobile_phone" autocomplete="off" data-inputmask="'mask':'(999) 999-9999'" name="mobile_phone" id="mobile_phone" placeholder="@Dcm.Source.GlobalHelper.GetGlobalResource("mobilephone")">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">Eski şifre</label>
+                                </div>
+
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <p><input type="password" name="oldPassword" id="oldPassword" autocomplete="off" class="form-control" placeholder="Eski Şifre"></p>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">Yeni şifre</label>
+                                </div>
+
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <p><input type="password" name="newPassword" id="newPassword" autocomplete="off" class="form-control" placeholder="Yeni Şifre"></p>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">Yeni şifre tekrar</label>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <p><input type="password" name="newPasswordRepeat" id="newPasswordRepeat" autocomplete="off" class="form-control" placeholder="Yeni Şifre Tekrar"></p>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("address")</label>
+                                </div>
+                                <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 form-validate">
+                                    <textarea name="address" id="address" disabled cols="50" rows="4" class="form-control">@Model.address</textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-sm-6 col-sm-offset-3">
+                                    <div class="btn-toolbar">
+                                        Şifre dışındaki kullanıcı bilgilerinizi güncellemek için uygulama yöneticisi ile görüşünüz.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" style="height:20px">
+                                <div class="col-sm-6 col-sm-offset-3">
+                                    <div class="btn-toolbar" >
+                                    </div>
+                                </div>
+                            </div>
+                                        <div class="row">
+                                            <div class="col-sm-6 col-sm-offset-3">
+                                                <div class="btn-toolbar">
+                                         
+                                        <input type="submit" class="btn-primary btn" value="Şifre Değiştir" onclick="Update()" />
+                                        
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+        </div><!-- container -->
+    </div>
+
+    <input type="hidden" id="FromDeleteButton" name="FromDeleteButton" />
+}
+
+<style>
+    .table-bordered > tbody > tr > td {
+        padding: 5px;
+        line-height: 1.428571429;
+        vertical-align: top;
+        border-top: 1px solid #e6e7e8;
+    }
+
+    #wrap > .container {
+        padding: 10px;
+    }
+
+    #wrap {
+        margin-top: 0px;
+    }
+</style>
+<script type='text/javascript' src='~/assets/plugins/datatables/jquery.dataTables.min.js'></script>
+<script type='text/javascript' src='~/assets/plugins/datatables/dataTables.bootstrap.js'></script>
+
+<script>
+    $(document).ready(function () {
+       
+
+    });
+
+    function Update() {
+
+        var isValid = $('#validate-form').parsley().validate();
+
+        if (!isValid) {
+            $('#message_div').hide()
+        }
+
+    }
+
+  
+</script>

@@ -1,0 +1,60 @@
+﻿@model Dcm.Models.Task
+
+<div class="modal" id="modal_task_history" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+    <div class="modal-dialog" style="width:65%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="HideModal();">&times;</button>
+                <h4 class="modal-title">@Dcm.Source.GlobalHelper.GetGlobalResource("task_history")</h4>
+            </div>
+            <div class="modal-body">
+                <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered " style="padding:0px !important">
+                    <thead>
+                        <tr>
+                            <th >@Dcm.Source.GlobalHelper.GetGlobalResource("task_name")</th>
+                            <th >@Dcm.Source.GlobalHelper.GetGlobalResource("task_status_name")</th>
+                            <th >@Dcm.Source.GlobalHelper.GetGlobalResource("assigned_user_name")</th>
+                            <th >@Dcm.Source.GlobalHelper.GetGlobalResource("update_user")</th>
+                            <th >@Dcm.Source.GlobalHelper.GetGlobalResource("update_date")</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.taskHistoryList != null)
+                        {
+                            foreach (var item in Model.taskHistoryList)
+                            {
+                                <tr>
+                                    <td >@item.task_name</td>
+                                    <td >@item.task_status_name</td>
+                                    <td >@item.assigned_user_name</td>
+                                    <td >@item.updated_user</td>
+                                    <td >@BaseClasses.BaseFunctions.ToLocalTime(item.history_at.Value, BaseDB.SessionContext.Current.ActiveUser.TimeZoneInfoUser.Id)</td>
+
+                                </tr>
+
+                            }
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="HideModal();">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        
+    });
+
+    function HideModal()
+    {
+        $("#modal_task_history").hide();
+    }
+
+    
+</script>
+
+

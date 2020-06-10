@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="2cb5fe4eb94044d9b3465483d99188c7" Name="Diagram1" ZoomLevel="41">
+        <EntityTypeShape EntityType="DCMModel.crm_kurumlar" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="DCMModel.crm_bireyler" Width="1.5" PointX="3.375" PointY="0.75" />
+        <EntityTypeShape EntityType="DCMModel.ref_crm_project_types" Width="1.5" PointX="5.375" PointY="5.75" />
+        <EntityTypeShape EntityType="DCMModel.crm_bireyler_kurumlar_v" Width="1.5" PointX="0.75" PointY="7.75" />
+        <EntityTypeShape EntityType="DCMModel.crm_projects" Width="1.5" PointX="7.375" PointY="0.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

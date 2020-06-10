@@ -1,0 +1,522 @@
+﻿@model Dcm.Models.Index
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    ViewBag.Title = "Ana Sayfa";
+}
+
+<div style="margin-top:-10px">
+@if (Dcm.Source.GlobalHelper.IsAuthorized("110", "menu_right", BaseDB.SessionContext.Current.ActiveUser.UserUid.ToString()))
+ {
+    <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-3 col-xs-12 col-sm-6">
+                            <a class="info-tiles tiles-toyo" href="General/ListPage?MenuId=@Dcm.Source.GlobalHelper.Encrypt("110")">
+                                <div class="tiles-heading">Toplam Görev Sayısı</div>
+                                <div class="tiles-body-alt">
+                                    <i class="fa fa-suitcase"></i>
+                                    <div class="text-center">@Model.totalActiveTask</div>
+                                    @*<small>Listeye Git</small>*@
+                                </div>
+                                <div class="tiles-footer">&nbsp;</div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-xs-12 col-sm-6">
+                            <a class="info-tiles tiles-success" href="General/ListPage?MenuId=@Dcm.Source.GlobalHelper.Encrypt("140")">
+                                <div class="tiles-heading">Toplam Tamamlanan Görevler</div>
+                                <div class="tiles-body-alt">
+                                    <i class="fa fa-folder-open"></i>
+                                    <div class="text-center">@Model.totalActiveFinishedTask</div>
+                                    @*<small>-13.5% from last week</small>*@
+                                </div>
+                                <div class="tiles-footer">&nbsp;</div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-xs-12 col-sm-6">
+                            <a class="info-tiles tiles-orange" href="General/ListPage?MenuId=@Dcm.Source.GlobalHelper.Encrypt("147")">
+                                <div class="tiles-heading">Toplam Kapanan Görevler</div>
+                                <div class="tiles-body-alt">
+                                    <i class="fa fa-folder"></i>
+                                    <div class="text-center">@Model.totalActiveClosedTask</div>
+                                    @*<small>new users registered</small>*@
+                                </div>
+                                <div class="tiles-footer">&nbsp;</div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-xs-12 col-sm-6">
+                            <a class="info-tiles tiles-alizarin" href="General/ListPage?MenuId=@Dcm.Source.GlobalHelper.Encrypt("143")">
+                                <div class="tiles-heading">Toplam Devam Eden Görevler</div>
+                                <div class="tiles-body-alt">
+                                    <i class="fa fa-pencil-square"></i>
+                                    <div class="text-center">@Model.totalActiveProcessedTask</div>
+                                    @*<small>new orders received</small>*@
+                                </div>
+                                <div class="tiles-footer">&nbsp;</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+    <div class="row" >
+        <div class="col-sm-12 col-md-6" >
+            <div class="panel panel-inverse" >
+                <div class="panel-heading">
+                    <h4>Tüm Görevler</h4>
+                </div>
+                <div class="panel-body" style="height:429px">
+                    <div id="all-task-donut-chart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6" >
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <h4>Tüm Görevler</h4>
+                </div>
+                <div class="panel-body">
+                    <div id="all-task-bar-chart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row" >
+        <div class="col-sm-12 col-md-6" >
+            <div class="panel panel-inverse" >
+                <div class="panel-heading">
+                    <h4>Tamamlanan Görev Durumu</h4>
+                </div>
+                <div class="panel-body" style="height:429px">
+                    <div id="all-completed-task-by-month-line-chart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6" >
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <h4>Zamanında Tamamlanan Görev Durumu</h4>
+                </div>
+                <div class="panel-body" style="height:429px">
+                    <div id="all-completed-task-by-month-line-chart-ontime"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row" >
+        <div class="col-sm-12 col-md-12" >
+            <div class="panel panel-inverse" >
+                <div class="panel-heading">
+                    <h4>Kapatılan Görevler</h4>
+                </div>
+                <div class="panel-body" style="height:429px">
+                    <div id="all-closed-task-by-month-line-chart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+    @*<div class="row">
+
+        <div class="col-sm-12 col-md-6">
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <h4>Atadığım Görevler</h4>
+                </div>
+                <div class="panel-body">
+                    <div id="my-task-donut-chart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6">
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <h4>Atadığım Görevler</h4>
+                </div>
+                <div class="panel-body">
+                    
+                    <div id="my-task-bar-chart"></div>
+                </div>
+            </div>
+        </div>
+    </div>*@
+    @if (Dcm.Source.GlobalHelper.IsAuthorized("149", "menu_right", BaseDB.SessionContext.Current.ActiveUser.UserUid.ToString()))
+ {
+        <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-3 col-xs-12 col-sm-6">
+                            <a class="info-tiles tiles-toyo" href="General/ListPage?MenuId=@Dcm.Source.GlobalHelper.Encrypt("149")">
+                                <div class="tiles-heading">Bana Atanan Görev Sayısı</div>
+                                <div class="tiles-body-alt">
+                                    <i class="fa fa-suitcase"></i>
+                                    <div class="text-center">@Model.totalActiveTaskMy</div>
+                                    @*<small>Listeye Git</small>*@
+                                </div>
+                                <div class="tiles-footer">&nbsp;</div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-xs-12 col-sm-6">
+                            <a class="info-tiles tiles-success" href="General/ListPage?MenuId=@Dcm.Source.GlobalHelper.Encrypt("150")">
+                                <div class="tiles-heading">Bana Atanan Tamamlanan Görevler</div>
+                                <div class="tiles-body-alt">
+                                    <i class="fa fa-folder-open"></i>
+                                    <div class="text-center">@Model.totalActiveFinishedTaskMy</div>
+                                    @*<small>-13.5% from last week</small>*@
+                                </div>
+                                <div class="tiles-footer">&nbsp;</div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-xs-12 col-sm-6">
+                            <a class="info-tiles tiles-orange" href="General/ListPage?MenuId=@Dcm.Source.GlobalHelper.Encrypt("185")">
+                                <div class="tiles-heading">Bana Atanan Kapanan Görevler</div>
+                                <div class="tiles-body-alt">
+                                    <i class="fa fa-folder"></i>
+                                    <div class="text-center">@Model.totalActiveClosedTaskMy</div>
+                                    @*<small>new users registered</small>*@
+                                </div>
+                                <div class="tiles-footer">&nbsp;</div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-xs-12 col-sm-6">
+                            <a class="info-tiles tiles-alizarin" href="General/ListPage?MenuId=@Dcm.Source.GlobalHelper.Encrypt("165")">
+                                <div class="tiles-heading">Bana Atanan Devam Eden Görevler</div>
+                                <div class="tiles-body-alt">
+                                    <i class="fa fa-pencil-square"></i>
+                                    <div class="text-center">@Model.totalActiveProcessedTaskMy</div>
+                                    @*<small>new orders received</small>*@
+                                </div>
+                                <div class="tiles-footer">&nbsp;</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    <div class="row" id="assignedChartId" style="display:none">
+        <div class="col-md-12 col-lg-6">
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <h4>Bana Atanan Görevler</h4>
+                </div>
+                <div class="panel-body" style="height:429px">
+                    <div id="my-assigned-task-donut-chart"></div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 col-lg-6">
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <h4>Bana Atanan Görevler</h4>
+                </div>
+                <div class="panel-body">
+                    <div id="my-assigned-task-bar-chart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+</div>
+
+
+
+@*<script type='text/javascript' src='assets/plugins/charts-chartjs/Chart.min.js'></script>*@
+<script type='text/javascript' src='assets/plugins/charts-morrisjs/raphael.min.js'></script>
+<script type='text/javascript' src='assets/plugins/charts-morrisjs/morris.min.js'></script> 
+
+<script>
+
+    $(document).ready(function () {
+        if ('@Dcm.Source.GlobalHelper.IsAuthorized("110", "menu_right", BaseDB.SessionContext.Current.ActiveUser.UserUid.ToString())' == 'True') {
+            GetAllTaskStatusChartData();
+            GetMyAssignedTaskStatusChartData();
+            GetAllCompletedTaskStatusChartData();
+            GetAllCompletedTaskStatusChartOnTimeData();
+            GetAllClosedTaskStatusChartData();
+        }
+        else if ('@Dcm.Source.GlobalHelper.IsAuthorized("149", "menu_right", BaseDB.SessionContext.Current.ActiveUser.UserUid.ToString())' == 'True') {
+            GetMyAssignedTaskStatusChartData();
+        }
+        //GetMyTaskStatusChartData();
+        
+    });
+
+    function GetAllTaskStatusChartData() {
+        urlAPI = "/Home/GetAllTaskStatusChartData";
+        getAjax(ajaxType.POST, urlAPI, ajaxDataType.JSON, ajaxAsync.TRUE, ajaxShowProgress.TRUE, callbackAllTaskStatusChart, "");
+    }
+
+    function callbackAllTaskStatusChart(response) {
+        var aData = response;
+        var arrPie = [];
+        var arrBar = [];
+        $.each(aData, function (inx, val) {
+            var obj = {};
+            //obj.color = val.color;
+            obj.value = val.value;
+            obj.label = val.label;
+            
+            arrPie.push(obj);
+        });
+
+        $.each(aData, function (inx, val) {
+            var obj = {};
+            //obj.color = val.color;
+            obj.y = val.label;
+            obj.a = val.value;
+
+            arrBar.push(obj);
+        });
+
+
+        //var ctx = $("#all-task-donut-chart").get(0).getContext("2d");
+
+        //var options = {
+        //    segmentShowStroke: false,
+        //    animateRotate: true,
+        //    animateScale: false,
+        //    percentageInnerCutout: 50,
+        //    tooltipTemplate: "<%= value %>%"
+        //}
+
+        //var myChart = new Chart(ctx).Doughnut(arr, options);
+
+        
+
+        Morris.Donut({
+            element: 'all-task-donut-chart',
+            data:arrPie
+        });
+
+        Morris.Bar({
+            element: 'all-task-bar-chart',
+            data: arrBar,
+            xkey: 'y',
+            ykeys: ['a'],
+            labels: ['Görev Durumu']
+        });
+
+
+      
+    }
+
+    function GetMyAssignedTaskStatusChartData() {
+        urlAPI = "/Home/GetMyAssignedTaskStatusChartData";
+        getAjax(ajaxType.POST, urlAPI, ajaxDataType.JSON, ajaxAsync.TRUE, ajaxShowProgress.TRUE, callbackMyAssignedTaskStatusChart, "");
+    }
+
+    function callbackMyAssignedTaskStatusChart(response) {
+        var aData = response;
+        var arrPie = [];
+        var arrBar = [];
+        $.each(aData, function (inx, val) {
+            var obj = {};
+            //obj.color = val.color;
+            obj.value = val.value;
+            obj.label = val.label;
+
+            arrPie.push(obj);
+        });
+
+        $.each(aData, function (inx, val) {
+            var obj = {};
+            //obj.color = val.color;
+            obj.y = val.label;
+            obj.a = val.value;
+
+            arrBar.push(obj);
+        });
+
+        if (arrPie.length == 0)
+            $("#assignedChartId").hide();
+        else
+            $("#assignedChartId").show();
+
+        Morris.Donut({
+            element: 'my-assigned-task-donut-chart',
+            data: arrPie
+        });
+
+        Morris.Bar({
+            element: 'my-assigned-task-bar-chart',
+            data: arrBar,
+            xkey: 'y',
+            ykeys: ['a'],
+            labels: ['Görev Durumu']
+        });
+
+
+
+    }
+
+    function GetMyTaskStatusChartData() {
+        urlAPI = "/Home/GetMyTaskStatusChartData";
+        getAjax(ajaxType.POST, urlAPI, ajaxDataType.JSON, ajaxAsync.TRUE, ajaxShowProgress.TRUE, callbackMyTaskStatusChart, "");
+    }
+
+    function callbackMyTaskStatusChart(response) {
+        var aData = response;
+        var arrPie = [];
+        var arrBar = [];
+        $.each(aData, function (inx, val) {
+            var obj = {};
+            //obj.color = val.color;
+            obj.value = val.value;
+            obj.label = val.label;
+
+            arrPie.push(obj);
+        });
+
+        $.each(aData, function (inx, val) {
+            var obj = {};
+            //obj.color = val.color;
+            obj.y = val.label;
+            obj.a = val.value;
+
+            arrBar.push(obj);
+        });
+
+
+
+        Morris.Donut({
+            element: 'my-task-donut-chart',
+            data: arrPie
+        });
+
+        Morris.Bar({
+            element: 'my-task-bar-chart',
+            data: arrBar,
+            xkey: 'y',
+            ykeys: ['a'],
+            labels: ['Görev Durumu']
+        });
+
+
+
+    }
+
+    function GetAllCompletedTaskStatusChartData() {
+        urlAPI = "/Home/GetAllCompletedTaskStatusChartData";
+        getAjax(ajaxType.POST, urlAPI, ajaxDataType.JSON, ajaxAsync.TRUE, ajaxShowProgress.TRUE, callbackAllCompletedTaskStatusChartData, "");
+    }
+
+    function callbackAllCompletedTaskStatusChartData(response) {
+        var aData = response;
+        var arrLine = [];
+        $.each(aData, function (inx, val) {
+            var obj = {};
+            //obj.color = val.color;
+            obj.a = val.value;
+            obj.y = val.label;
+
+            arrLine.push(obj);
+        });
+
+        var months = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+
+        Morris.Line({
+            element: 'all-completed-task-by-month-line-chart',
+            data: arrLine,
+            xkey: 'y',
+            ykeys: ['a'],
+            labels: ['2015'],
+            xLabelFormat: function (x) { // <--- x.getMonth() returns valid index
+                var month = months[x.getMonth()];
+                return month;
+            },
+            dateFormat: function (x) {
+                var month = months[new Date(x).getMonth()];
+                return month;
+            },
+        });
+
+
+
+    }
+
+    function GetAllClosedTaskStatusChartData() {
+        urlAPI = "/Home/GetAllClosedTaskStatusChartData";
+        getAjax(ajaxType.POST, urlAPI, ajaxDataType.JSON, ajaxAsync.TRUE, ajaxShowProgress.TRUE, callbackAllClosedTaskStatusChartData, "");
+    }
+
+    function callbackAllClosedTaskStatusChartData(response) {
+        var aData = response;
+        var arrLine = [];
+        $.each(aData, function (inx, val) {
+            var obj = {};
+            //obj.color = val.color;
+            obj.a = val.value;
+            obj.y = val.label;
+
+            arrLine.push(obj);
+        });
+
+        var months = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+
+        Morris.Line({
+            element: 'all-closed-task-by-month-line-chart',
+            data: arrLine,
+            xkey: 'y',
+            ykeys: ['a'],
+            labels: ['2015'],
+            xLabelFormat: function (x) { // <--- x.getMonth() returns valid index
+                var month = months[x.getMonth()];
+                return month;
+            },
+            dateFormat: function (x) {
+                var month = months[new Date(x).getMonth()];
+                return month;
+            },
+        });
+
+
+
+    }
+
+
+    function GetAllCompletedTaskStatusChartOnTimeData() {
+        urlAPI = "/Home/GetAllCompletedTaskStatusChartOnTimeData";
+        getAjax(ajaxType.POST, urlAPI, ajaxDataType.JSON, ajaxAsync.TRUE, ajaxShowProgress.TRUE, callbackAllCompletedTaskStatusChartOnTimeData, "");
+    }
+
+    function callbackAllCompletedTaskStatusChartOnTimeData(response) {
+        var aData = response;
+        var arrLine = [];
+        $.each(aData, function (inx, val) {
+            var obj = {};
+            //obj.color = val.color;
+            obj.a = val.value;
+            obj.y = val.label;
+
+            arrLine.push(obj);
+        });
+
+        var months = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+
+        Morris.Line({
+            element: 'all-completed-task-by-month-line-chart-ontime',
+            data: arrLine,
+            xkey: 'y',
+            ykeys: ['a'],
+            labels: ['2015'],
+            xLabelFormat: function (x) { // <--- x.getMonth() returns valid index
+                var month = months[x.getMonth()];
+                return month;
+            },
+            dateFormat: function (x) {
+                var month = months[new Date(x).getMonth()];
+                return month;
+            },
+        });
+
+
+
+    }
+
+    
+</script>

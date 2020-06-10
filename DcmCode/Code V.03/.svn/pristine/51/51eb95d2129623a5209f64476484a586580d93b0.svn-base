@@ -1,0 +1,354 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="birth_date" xml:space="preserve">
+    <value>Doğum Tarihi</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>Detay</value>
+  </data>
+  <data name="email" xml:space="preserve">
+    <value>E-Posta</value>
+  </data>
+  <data name="home_phone" xml:space="preserve">
+    <value>Ev Telefonu</value>
+  </data>
+  <data name="identity_number" xml:space="preserve">
+    <value>Sicil No</value>
+  </data>
+  <data name="mobile_phone" xml:space="preserve">
+    <value>Cep Telefonu</value>
+  </data>
+  <data name="name" xml:space="preserve">
+    <value>Ad</value>
+  </data>
+  <data name="role_explanation" xml:space="preserve">
+    <value>Rol Açıklaması</value>
+  </data>
+  <data name="role_id" xml:space="preserve">
+    <value>Rol No</value>
+  </data>
+  <data name="role_name" xml:space="preserve">
+    <value>Rol Adı</value>
+  </data>
+  <data name="surname" xml:space="preserve">
+    <value>Soyad</value>
+  </data>
+  <data name="address" xml:space="preserve">
+    <value>Adres</value>
+  </data>
+  <data name="birthdate" xml:space="preserve">
+    <value>Doğum Tarihi</value>
+  </data>
+  <data name="enddate" xml:space="preserve">
+    <value>Çıkış Tarihi</value>
+  </data>
+  <data name="homephone" xml:space="preserve">
+    <value>Ev Telefonu</value>
+  </data>
+  <data name="identitynumber" xml:space="preserve">
+    <value>Sicil No</value>
+  </data>
+  <data name="isactive" xml:space="preserve">
+    <value>Aktif</value>
+  </data>
+  <data name="mobilephone" xml:space="preserve">
+    <value>Cep Telefonu</value>
+  </data>
+  <data name="note" xml:space="preserve">
+    <value>Not</value>
+  </data>
+  <data name="password" xml:space="preserve">
+    <value>Şifre</value>
+  </data>
+  <data name="startdate" xml:space="preserve">
+    <value>Giriş Tarihi</value>
+  </data>
+  <data name="is_active" xml:space="preserve">
+    <value>Aktif/Pasif</value>
+  </data>
+  <data name="transaction_success" xml:space="preserve">
+    <value>İşleminiz başarıyla gerçekleştirilmiştir.</value>
+  </data>
+  <data name="exists_user_email" xml:space="preserve">
+    <value>Girdiğiniz e-posta adresi daha önce kaydedilmiş. Lütfen farklı bir e-posta adresi giriniz.</value>
+  </data>
+  <data name="login_failed" xml:space="preserve">
+    <value>Giriş işlemi başarısız oldu. Lütfen e-posta ve şifrenizi kontrol ederek tekrar deneyiniz.</value>
+  </data>
+  <data name="transaction_success_with_password" xml:space="preserve">
+    <value>İşleminiz başarıyla gerçekleştirilmiştir. Şifre bilgileri güncellenmiştir.</value>
+  </data>
+  <data name="role_related_users_defined" xml:space="preserve">
+    <value>Seçilen kullanıcı daha önceden eklenmiş.</value>
+  </data>
+  <data name="role_related_role_not_defined" xml:space="preserve">
+    <value>Lütfen önce Rol bilgilerini kaydediniz.</value>
+  </data>
+  <data name="role_changed_successfully" xml:space="preserve">
+    <value>Role seçimi yapıldı.</value>
+  </data>
+  <data name="are_you_sure_to_delete" xml:space="preserve">
+    <value>Silmek istediğinize emin misiniz?</value>
+  </data>
+  <data name="browser" xml:space="preserve">
+    <value>Tarayıcı</value>
+  </data>
+  <data name="date" xml:space="preserve">
+    <value>Tarih</value>
+  </data>
+  <data name="host_name" xml:space="preserve">
+    <value>Host </value>
+  </data>
+  <data name="name_surname" xml:space="preserve">
+    <value>Ad Soyad</value>
+  </data>
+  <data name="platform" xml:space="preserve">
+    <value>Platform</value>
+  </data>
+  <data name="type" xml:space="preserve">
+    <value>Tip</value>
+  </data>
+  <data name="user_host_adres" xml:space="preserve">
+    <value>Host Adres</value>
+  </data>
+  <data name="version" xml:space="preserve">
+    <value>Versiyon</value>
+  </data>
+  <data name="group_explanation" xml:space="preserve">
+    <value>Grup Açıklaması</value>
+  </data>
+  <data name="group_name" xml:space="preserve">
+    <value>Grup Adı</value>
+  </data>
+  <data name="group_manager_name_surname" xml:space="preserve">
+    <value>Grup Yöneticisi</value>
+  </data>
+  <data name="group_manager" xml:space="preserve">
+    <value>Grup Yöneticisi</value>
+  </data>
+  <data name="manager" xml:space="preserve">
+    <value>Yönetici</value>
+  </data>
+  <data name="related_group" xml:space="preserve">
+    <value>Bağlı Olduğu Grup</value>
+  </data>
+  <data name="manager_name" xml:space="preserve">
+    <value>Yönetici Adı</value>
+  </data>
+  <data name="eposta" xml:space="preserve">
+    <value>E-Posta</value>
+  </data>
+  <data name="faks1" xml:space="preserve">
+    <value>Fax</value>
+  </data>
+  <data name="faksi_1" xml:space="preserve">
+    <value>Fax</value>
+  </data>
+  <data name="kurum_kodu" xml:space="preserve">
+    <value>Kurum Kodu</value>
+  </data>
+  <data name="telefon1" xml:space="preserve">
+    <value>Telefon</value>
+  </data>
+  <data name="telefonu_1" xml:space="preserve">
+    <value>Telefon</value>
+  </data>
+  <data name="ticari_unvan" xml:space="preserve">
+    <value>Ticari Ünvanı</value>
+  </data>
+  <data name="ticari_unvani" xml:space="preserve">
+    <value>Ticari Ünvanı</value>
+  </data>
+  <data name="vergino" xml:space="preserve">
+    <value>Vergi No</value>
+  </data>
+  <data name="vergi_dairesi" xml:space="preserve">
+    <value>Vergi Dairesi</value>
+  </data>
+  <data name="vergi_no" xml:space="preserve">
+    <value>Vergi No</value>
+  </data>
+  <data name="web_sitesi" xml:space="preserve">
+    <value>Web Sayfası</value>
+  </data>
+  <data name="ad" xml:space="preserve">
+    <value>Ad</value>
+  </data>
+  <data name="calistigi_kurum" xml:space="preserve">
+    <value>Çalıştığı Kurum</value>
+  </data>
+  <data name="eposta_adresi" xml:space="preserve">
+    <value>Eposta Adresi</value>
+  </data>
+  <data name="soyad" xml:space="preserve">
+    <value>Soyad</value>
+  </data>
+  <data name="project_assigned_name_surname" xml:space="preserve">
+    <value>Atanmış Kullanıcı</value>
+  </data>
+  <data name="project_name" xml:space="preserve">
+    <value>Proje Adı</value>
+  </data>
+  <data name="project_owner" xml:space="preserve">
+    <value>Proje Sahibi</value>
+  </data>
+  <data name="project_type_name" xml:space="preserve">
+    <value>Proje Sahibi Tipi</value>
+  </data>
+  <data name="project_description" xml:space="preserve">
+    <value>Proje Açıklaması</value>
+  </data>
+  <data name="assigned_user_name" xml:space="preserve">
+    <value>Görev Atanan Kullanıcı</value>
+  </data>
+  <data name="end_date" xml:space="preserve">
+    <value>Bitiş Tarihi</value>
+  </data>
+  <data name="related_project_name" xml:space="preserve">
+    <value>İlişkili Proje</value>
+  </data>
+  <data name="start_date" xml:space="preserve">
+    <value>Başlangıç Tarihi</value>
+  </data>
+  <data name="task_description" xml:space="preserve">
+    <value>Görev Tanımı</value>
+  </data>
+  <data name="task_name" xml:space="preserve">
+    <value>Görev Adı</value>
+  </data>
+  <data name="task_owner" xml:space="preserve">
+    <value>Görev Atayan Kullanıcı</value>
+  </data>
+  <data name="task_priority_name" xml:space="preserve">
+    <value>Görev Önceliği</value>
+  </data>
+  <data name="task_status_name" xml:space="preserve">
+    <value>Görev Durumu</value>
+  </data>
+  <data name="are_you_sure_to_create_task" xml:space="preserve">
+    <value>Görevi göndermek istediğinize emin misiniz?</value>
+  </data>
+  <data name="fill_task_closing_explanation" xml:space="preserve">
+    <value>Lütfen görev kapatma açıklamasını giriniz. </value>
+  </data>
+  <data name="task_closing_explanation" xml:space="preserve">
+    <value>Görev Kapatma Açıklaması</value>
+  </data>
+</root>

@@ -1,0 +1,11 @@
+﻿@model Dcm.Models.TreeMini
+
+
+@foreach (var node in Model.RootNode.Children)
+{
+    if (node.ParentMenuId == 0)
+    {
+        <li id="@node.MenuId"><a style="text-decoration: none; color: #4F8EDC" href="@node.ObjectName" style="cursor:pointer"><i class="fa @node.IconClass"></i> <span>@node.Name</span></a>@Html.DisplayFor(x => node)</li>
+    }
+
+}

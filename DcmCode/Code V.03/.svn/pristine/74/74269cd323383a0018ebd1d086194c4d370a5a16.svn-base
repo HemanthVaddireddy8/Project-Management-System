@@ -1,0 +1,286 @@
+﻿using Dcm.Models;
+using Dcm.Source;
+using Gunluk.EntityModels;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Dcm.EntityModels;
+using BaseDB;
+using Dcm.Filters;
+using System.Web.Script.Serialization;
+
+namespace Dcm.Controllers
+{
+    public class UsersController : Controller
+    {
+        [HttpGet]
+        [AllowAnonymous]
+        [SessionCheckAttribute]
+        public ActionResult User(string RecordId,string MenuId )
+        {
+            GenelRepository gnlDB = RepositoryManager.GetRepository<GenelRepository>();
+            User model = new User();
+
+            #region Ortak Set Edilecek Değerler  
+            model.RecordId = RecordId;
+            model.MenuId = MenuId;
+            SessionContext.Current.ActiveUser.MenuId = MenuId;
+            #endregion
+
+            Guid recordId = Guid.Empty;
+
+            if (GlobalHelper.IsGuid(model.RecordId))
+            {
+                try
+                {
+                    recordId = Guid.Parse(model.RecordId);
+                    model = gnlDB.BindUser(model, recordId);
+                    ViewBag.ResultMessage = Resources.GlobalResource.transaction_success;
+                }
+                catch (Exception exp)
+                {
+                    ViewBag.Success = false;
+                    ModelState.AddModelError("Error", exp.Message);
+                }
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [SessionCheckAttribute]
+        public ActionResult User(User model)
+        {
+            Guid recordId = Guid.Empty;
+            GenelRepository gnlDB = RepositoryManager.GetRepository<GenelRepository>();
+
+            #region Ortak Set Edilecek Değerler
+            SessionContext.Current.ActiveUser.MenuId = model.MenuId;
+            ViewBag.Success = true;
+            #endregion
+
+            ModelState.Remove("start_date");
+            ModelState.Remove("end_date");
+            ModelState.Remove("is_active");
+
+            if (ModelState.IsValid)
+            {
+                if (GlobalHelper.IsGuid(model.RecordId))
+                {
+                    recordId = Guid.Parse(model.RecordId);
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(model.password))
+                            model.password = GlobalHelper.EncriptText(model.password.Trim());
+
+                        gnl_users userByEmail = new gnl_users();
+                        userByEmail = gnlDB.GetUserByEmail(model.email.Trim());
+
+                        if (userByEmail != null && userByEmail.user_id != recordId)
+                        {
+                            ViewBag.Success = false;
+                            ModelState.AddModelError("Error", Resources.GlobalResource.exists_user_email);
+                        }
+                        else
+                        {
+                            model = gnlDB.UpdateUser(model, recordId);
+
+                            if(!string.IsNullOrEmpty(model.password))
+                                ViewBag.ResultMessage = Resources.GlobalResource.transaction_success_with_password;
+                            else
+                                ViewBag.ResultMessage = Resources.GlobalResource.transaction_success;
+                        }
+                    }
+                    catch (Exception exp)
+                    {
+                        ViewBag.Success = false;
+                        ModelState.AddModelError("Error", exp.Message);
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        gnl_users user = new gnl_users();
+
+                        if (!string.IsNullOrEmpty(model.password))
+                            model.password = GlobalHelper.EncriptText(model.password.Trim());
+
+                        gnl_users userByEmail = new gnl_users();
+                        userByEmail = gnlDB.GetUserByEmail(model.email.Trim());
+
+                        if (userByEmail != null)
+                        {
+                            ViewBag.Success = false;
+                            ModelState.AddModelError("Error", Resources.GlobalResource.exists_user_email);
+                        }
+                        else
+                        {
+                            gnlDB.AddUser(user, model);
+                            model.RecordId = user.user_id.ToString();
+
+                            if (!string.IsNullOrEmpty(model.password))
+                                ViewBag.ResultMessage = Resources.GlobalResource.transaction_success_with_password;
+                            else
+                                ViewBag.ResultMessage = Resources.GlobalResource.transaction_success;
+                        }
+                    }
+                    catch (Exception exp)
+                    {
+                        ViewBag.Success = false;
+                        ModelState.AddModelError("Error", exp.Message);
+                    }
+                }
+            }
+            else
+            {
+                ViewBag.Success = false;
+            }
+            
+            return View(model);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [SessionCheckAttribute]
+        public ActionResult Role(string RecordId, string MenuId)
+        {
+            GenelRepository gnlDB = RepositoryManager.GetRepository<GenelRepository>();
+            Role model = new Role();
+
+            #region Ortak Set Edilecek Değerler
+            model.RecordId = RecordId;
+            model.MenuId = MenuId;
+            SessionContext.Current.ActiveUser.MenuId = MenuId;
+            #endregion
+
+            Guid recordId = Guid.Empty;
+
+            if (GlobalHelper.IsGuid(model.RecordId))
+            {
+                try
+                {
+                    recordId = Guid.Parse(model.RecordId);
+                    model = gnlDB.BindRole(model, recordId);
+                    ViewBag.ResultMessage = Resources.GlobalResource.transaction_success;
+                }
+                catch (Exception exp)
+                {
+                    ViewBag.Success = false;
+                    ModelState.AddModelError("Error", exp.Message);
+                }
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [SessionCheckAttribute]
+        public ActionResult Role(Role model)
+        {
+            Guid recordId = Guid.Empty;
+            GenelRepository gnlDB = RepositoryManager.GetRepository<GenelRepository>();
+
+            #region Ortak Set Edilecek Değerler
+            SessionContext.Current.ActiveUser.MenuId = model.MenuId;
+            ViewBag.Success = true;
+            #endregion
+
+            ModelState.Remove("is_active");
+
+            if (ModelState.IsValid)
+            {
+                if (GlobalHelper.IsGuid(model.RecordId))
+                {
+                    recordId = Guid.Parse(model.RecordId);
+                    try
+                    {
+                       model = gnlDB.UpdateRole(model, recordId);
+                       ViewBag.ResultMessage = Resources.GlobalResource.transaction_success;
+                    }
+                    catch (Exception exp)
+                    {
+                        ViewBag.Success = false;
+                        ModelState.AddModelError("Error", exp.Message);
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        gnl_roles role = new gnl_roles();
+                        gnlDB.AddRole(role, model);
+                        model.RecordId = role.role_id.ToString();
+                        ViewBag.ResultMessage = Resources.GlobalResource.transaction_success;
+                    }
+                    catch (Exception exp)
+                    {
+                        ViewBag.Success = false;
+                        ModelState.AddModelError("Error", exp.Message);
+                    }
+                }
+            }
+            else
+            {
+                ViewBag.Success = false;
+            }
+
+            return View(model);
+        }
+
+       
+        public JsonResult UserList(string type, string query)
+        {
+            GenelRepository gnlDB = RepositoryManager.GetRepository<GenelRepository>();
+            string list = string.Empty;
+            List<UserListModel> userListModel = new List<UserListModel>();
+
+            if (type == "ALL")
+            {
+                List<gnl_users> userList = gnlDB.GetUserByNameSurname(query.ToUpperInvariant());
+                #region Hisse Ve  Varant
+                foreach (var item in userList)
+                {
+                    UserListModel model = new UserListModel();
+                    model.value = item.name + " " + item.surname;
+                    UserListCategoryModel data = new UserListCategoryModel();
+                    data.category = "";
+                    data.id = item.user_id.ToString();
+                    model.data = data;
+                    userListModel.Add(model);
+                }
+
+                //foreach (var item in equityList)
+                //{
+                //    if (item.IS_WARRANT == "1")
+                //    {
+                //        EquityViopModel model = new EquityViopModel();
+                //        //model.Code=item.CODE;
+                //        model.value = item.CODE;
+                //        EquityViopCategoryModel data = new EquityViopCategoryModel();
+                //        data.category = "Varant";
+                //        data.id = item.FIN_INST_ID;
+                //        model.data = data;
+                //        equityViopModel.Add(model);
+                //    }
+                //}
+                #endregion
+            }
+
+
+
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            string userListModelStr = js.Serialize(userListModel);
+            string resultArray = "{\"suggestions\":" + userListModelStr + " }";
+
+            list = js.Serialize(resultArray);
+
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+      
+    }
+}

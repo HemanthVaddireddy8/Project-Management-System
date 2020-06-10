@@ -1,0 +1,53 @@
+﻿using Dcm.Models;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace Dcm.Controllers
+{
+    public class GeneralController : Controller
+    {
+        [AllowAnonymous]
+        public ActionResult ListPage(int MenuId)
+        {
+            DataSet dsMenu = new DataSet();
+            DataSet dsList = new DataSet();
+            dsMenu = BaseDB.DBManager.AppConnection.GetDataSet("select * from gnl_menu where menu_id=@menu_id ", new ArrayList { "menu_id" }, new ArrayList { MenuId });
+            string object_name = "";
+
+            if (dsMenu.Tables.Count > 0 && dsMenu.Tables[0].Rows.Count > 0)
+            {
+                ViewBag.ListName = dsMenu.Tables[0].Rows[0]["name"].ToString();
+                ViewBag.DetailPageName = dsMenu.Tables[0].Rows[0]["detail_page_url"].ToString();
+                ViewBag.PrimaryKey = dsMenu.Tables[0].Rows[0]["primary_key"].ToString();
+                ViewBag.HideColumns = dsMenu.Tables[0].Rows[0]["hide_columns"].ToString();
+                ViewBag.MenuId = MenuId;
+
+                object_name = dsMenu.Tables[0].Rows[0]["object_name"] != System.DBNull.Value ? dsMenu.Tables[0].Rows[0]["object_name"].ToString() : dsMenu.Tables[0].Rows[0]["table_name"].ToString();
+                
+                string columns = dsMenu.Tables[0].Rows[0]["show_columns"] != System.DBNull.Value ? dsMenu.Tables[0].Rows[0]["primary_key"].ToString()+","+dsMenu.Tables[0].Rows[0]["show_columns"].ToString() : " * ";
+                string filter = dsMenu.Tables[0].Rows[0]["filter"] != System.DBNull.Value ? " where " + dsMenu.Tables[0].Rows[0]["filter"].ToString() : "  ";
+
+                string order_by = dsMenu.Tables[0].Rows[0]["order_by"] != System.DBNull.Value ? " order by " + dsMenu.Tables[0].Rows[0]["order_by"].ToString() : "  ";
+                dsList = BaseDB.DBManager.AppConnection.GetDataSet("select " + columns + " from " + object_name + filter + order_by);
+            }
+
+
+            return View(dsList);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult ListPage()
+        {
+            DataSet ds = new DataSet();
+            return View(ds);
+        }
+
+    }
+}

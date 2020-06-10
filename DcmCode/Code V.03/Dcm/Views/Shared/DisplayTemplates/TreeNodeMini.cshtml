@@ -1,0 +1,40 @@
+﻿@model Dcm.Models.TreeNodeMini
+
+@if (Model.Children.Count > 0)
+{
+    <ul class="acc-menu">
+        @foreach (var node in Model.Children)
+        {
+            <li id="@node.MenuId"><a style="color:black;text-decoration:underline" href="#"><span>@node.Name</span></a></li>
+            <li style="list-style:none">
+                <ul id="ul_text" style="padding-left:15px">
+                    <li style="list-style: none; color: #E73C3C"><label><input id="Show_@node.MenuId" name="Show_@node.MenuId" type="checkbox" @(Dcm.Source.GlobalHelper.IsAuthorizedByRole(node.MenuId.ToString(), "menu_right", BaseDB.SessionContext.Current.ActiveUser.SelectedRoleId) ? "checked" : "") />Show</label></li>
+                    <li style="list-style: none; color: #E73C3C"><label><input id="NewRecord_@node.MenuId" name="NewRecord_@node.MenuId" type="checkbox" @(Dcm.Source.GlobalHelper.IsAuthorizedByRole(node.MenuId.ToString(), "new_record_right", BaseDB.SessionContext.Current.ActiveUser.SelectedRoleId) ? "checked" : "") />New Record</label></li>
+                    <li style="list-style: none; color: #E73C3C"><label><input id="Update_@node.MenuId" name="Update_@node.MenuId" type="checkbox" @(Dcm.Source.GlobalHelper.IsAuthorizedByRole(node.MenuId.ToString(), "update_right", BaseDB.SessionContext.Current.ActiveUser.SelectedRoleId) ? "checked" : "") />Update</label></li>
+                    <li style="list-style: none; color: #E73C3C"><label><input id="Delete_@node.MenuId" name="Delete_@node.MenuId" type="checkbox" @(Dcm.Source.GlobalHelper.IsAuthorizedByRole(node.MenuId.ToString(), "delete_right", BaseDB.SessionContext.Current.ActiveUser.SelectedRoleId) ? "checked" : "") />Delete</label></li>
+                    <li style="list-style: none; color: #E73C3C"><label><input id="Report_@node.MenuId" name="Report_@node.MenuId" type="checkbox" @(Dcm.Source.GlobalHelper.IsAuthorizedByRole(node.MenuId.ToString(), "report_right", BaseDB.SessionContext.Current.ActiveUser.SelectedRoleId) ? "checked" : "") />Report</label></li>
+                </ul>
+            </li>
+
+        }
+    </ul>
+}
+
+<style>
+    #ul_text li {
+        border-right: 10px solid #ffffff;
+        display: inline;
+        width:600px;
+    }
+
+    #ul_text input {
+        vertical-align: top;
+
+    }
+
+    #ul_text label {
+        margin-bottom: 5px !important;
+        margin-top: 5px !important;
+    }
+    
+</style>

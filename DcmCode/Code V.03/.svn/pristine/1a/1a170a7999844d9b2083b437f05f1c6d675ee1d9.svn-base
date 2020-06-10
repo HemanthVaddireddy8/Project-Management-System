@@ -1,0 +1,154 @@
+﻿using Dcm.Models;
+using Dcm.Source;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Script.Serialization;
+using Newtonsoft.Json;
+
+namespace Dcm.Controllers
+{
+    public class GeneralController : Controller
+    {
+        [AllowAnonymous]
+        public ActionResult ListPage(int MenuId)
+        {
+            DataSet dsList = new DataSet();
+            string totalCount = "0";
+            dsList = GetDataList(MenuId, "", "10", ref totalCount);
+            return View(dsList);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult ListPage()
+        {
+            DataSet ds = new DataSet();
+            return View(ds);
+        }
+
+        public ActionResult AjaxHandler(JQueryDataTableParamModel param,int MenuId)
+        {
+            string totalCount = "0";
+            DataSet ds = GetDataList(MenuId, param.sSearch == null ? "" : param.sSearch, "10", ref totalCount);
+            //var allCompanies = DataRepository.GetCompanies();
+            //IEnumerable<Company> filteredCompanies;
+            ////Check whether the companies should be filtered by keyword
+            //if (!string.IsNullOrEmpty(param.sSearch))
+            //{
+            //    //Used if particulare columns are filtered 
+            //    var nameFilter = Convert.ToString(Request["sSearch_1"]);
+            //    var addressFilter = Convert.ToString(Request["sSearch_2"]);
+            //    var townFilter = Convert.ToString(Request["sSearch_3"]);
+
+            //    //Optionally check whether the columns are searchable at all 
+            //    var isNameSearchable = Convert.ToBoolean(Request["bSearchable_1"]);
+            //    var isAddressSearchable = Convert.ToBoolean(Request["bSearchable_2"]);
+            //    var isTownSearchable = Convert.ToBoolean(Request["bSearchable_3"]);
+
+            //    filteredCompanies = DataRepository.GetCompanies()
+            //       .Where(c => isNameSearchable && c.Name.ToLower().Contains(param.sSearch.ToLower())
+            //                   ||
+            //                   isAddressSearchable && c.Address.ToLower().Contains(param.sSearch.ToLower())
+            //                   ||
+            //                   isTownSearchable && c.Town.ToLower().Contains(param.sSearch.ToLower()));
+            //}
+            //else
+            //{
+            //    filteredCompanies = allCompanies;
+            //}
+
+            //var isNameSortable = Convert.ToBoolean(Request["bSortable_1"]);
+            //var isAddressSortable = Convert.ToBoolean(Request["bSortable_2"]);
+            //var isTownSortable = Convert.ToBoolean(Request["bSortable_3"]);
+            //var sortColumnIndex = Convert.ToInt32(Request["iSortCol_0"]);
+            //Func<Company, string> orderingFunction = (c => sortColumnIndex == 1 && isNameSortable ? c.Name :
+            //                                               sortColumnIndex == 2 && isAddressSortable ? c.Address :
+            //                                               sortColumnIndex == 3 && isTownSortable ? c.Town :
+            //                                               "");
+
+            //var sortDirection = Request["sSortDir_0"]; // asc or desc
+            //if (sortDirection == "asc")
+            //    filteredCompanies = filteredCompanies.OrderBy(orderingFunction);
+            //else
+            //    filteredCompanies = filteredCompanies.OrderByDescending(orderingFunction);
+
+            //var displayedCompanies = filteredCompanies.Skip(param.iDisplayStart).Take(param.iDisplayLength);
+            //var result = from c in displayedCompanies select new[] { Convert.ToString(c.ID), c.Name, c.Address, c.Town };
+
+            
+            return Json(new
+            {
+                sEcho = param.sEcho,
+                iTotalRecords = totalCount,
+                iTotalDisplayRecords = ds.Tables[0].Rows.Count,
+                aaData = JsonConvert.SerializeObject(ds.Tables[0])
+            },
+                        JsonRequestBehavior.AllowGet);
+        }
+
+        public DataSet GetDataList(int MenuId, string searchText, string iDisplayLength,ref string totalCount)
+        {
+            DataSet dsMenu = new DataSet();
+            DataSet dsList = new DataSet();
+
+            dsMenu = BaseDB.DBManager.AppConnection.GetDataSet("select * from gnl_menu where menu_id=@menu_id ", new ArrayList { "menu_id" }, new ArrayList { MenuId });
+            string object_name = "";
+
+            totalCount = dsMenu.Tables[0].Rows.Count.ToString();
+
+            if (dsMenu.Tables.Count > 0 && dsMenu.Tables[0].Rows.Count > 0)
+            {
+                ViewBag.ListName = dsMenu.Tables[0].Rows[0]["name"].ToString();
+                ViewBag.DetailPageName = dsMenu.Tables[0].Rows[0]["detail_page_url"].ToString();
+                ViewBag.PrimaryKey = dsMenu.Tables[0].Rows[0]["primary_key"].ToString();
+                ViewBag.HideColumns = dsMenu.Tables[0].Rows[0]["hide_columns"].ToString();
+                ViewBag.MenuId = MenuId;
+
+                object_name = dsMenu.Tables[0].Rows[0]["object_name"] != System.DBNull.Value ? dsMenu.Tables[0].Rows[0]["object_name"].ToString() : dsMenu.Tables[0].Rows[0]["table_name"].ToString();
+
+                string columns = dsMenu.Tables[0].Rows[0]["show_columns"] != System.DBNull.Value ? dsMenu.Tables[0].Rows[0]["primary_key"].ToString() + "," + dsMenu.Tables[0].Rows[0]["show_columns"].ToString() : " * ";
+
+                string searchColumns = dsMenu.Tables[0].Rows[0]["show_columns"] != System.DBNull.Value ? dsMenu.Tables[0].Rows[0]["show_columns"].ToString() : "";
+                
+                string searchFilter="";
+
+                if (!string.IsNullOrEmpty(searchText))
+                {
+                    string[] arrClmn = searchColumns.Split(',');
+                    int i=0;
+                    foreach (string clmn in arrClmn)
+                    {
+                        if (i == 0)
+                        {
+                            searchFilter += " ( ";
+                        }
+
+                        if (i == (arrClmn.Length - 1))
+                        {
+                            searchFilter += clmn + " like '%" + searchText + "%' ) ";
+                        }
+                        else
+                        {
+                            searchFilter += clmn + " like '%" + searchText + "%' or ";
+                        }
+                        i++;
+                    }
+                }
+
+
+                string filter = dsMenu.Tables[0].Rows[0]["filter"] != System.DBNull.Value ? " where " + dsMenu.Tables[0].Rows[0]["filter"].ToString() + " " + searchFilter : (searchFilter.Trim() != "" ? " where " + searchFilter : " ");
+
+                string order_by = dsMenu.Tables[0].Rows[0]["order_by"] != System.DBNull.Value ? " order by " + dsMenu.Tables[0].Rows[0]["order_by"].ToString() : "  ";
+                dsList = BaseDB.DBManager.AppConnection.GetDataSet("select " + columns + " from " + object_name + filter + order_by);
+            }
+
+            return dsList;
+        }
+    }
+}

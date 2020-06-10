@@ -1,0 +1,208 @@
+﻿using Dcm.Models;
+using Dcm.Source;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Script.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Dcm.Filters;
+
+namespace Dcm.Controllers
+{
+    public class GeneralController : Controller
+    {
+        [AllowAnonymous]
+        [SessionCheckAttribute]
+        public ActionResult ListPage(int MenuId)
+        {
+            DataSet dsList = new DataSet();
+            
+            string totalCount = "0", detailPageName = "", searchText = "", displayCount = "-1", sortColumnDir = "";
+            int iDisplayStart = 0, iDisplayLength = 0, sortColumnIndex = -1;
+
+            dsList = GetDataList(MenuId, searchText, iDisplayStart, iDisplayLength, sortColumnIndex, sortColumnDir, ref totalCount, ref displayCount, ref detailPageName);
+            BaseDB.SessionContext.Current.ActiveUser.FromUpdateButton = "";
+            return View(dsList);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        [SessionCheckAttribute]
+        public ActionResult ListPage()
+        {
+            DataSet ds = new DataSet();
+            return View(ds);
+        }
+
+        [SessionCheckAttribute]
+        public ActionResult AjaxHandler(JQueryDataTableParamModel param,int MenuId)
+        {
+            string totalCount = "0", detailPageName = "", displayCount="0";
+
+            var sortColumnIndex = Convert.ToInt32(Request["iSortCol_0"]);
+            var sortColumnDir = Request["sSortDir_0"].ToString();
+            
+            DataSet ds = GetDataList(MenuId, param.sSearch == null ? "" : param.sSearch,param.iDisplayStart, param.iDisplayLength,sortColumnIndex,sortColumnDir, ref totalCount,ref displayCount, ref detailPageName);
+           
+            string list = JsonConvert.SerializeObject(ds.Tables[0]);
+
+            var arrayList = JArray.Parse(list);
+
+            List<string[]> stringListArr = new List<string[]>();
+            
+
+            foreach (JObject o in arrayList.Children<JObject>())
+            {
+                List<string> stringList = new List<string>();
+                int i = 0;
+                foreach (JProperty p in o.Properties())
+                {
+                    string name = p.Name;
+                    string value = p.Value.ToString();
+                    if (i == 1)
+                    {
+                        string url = Url.Content(detailPageName + "?MenuId=" + MenuId + "&RecordId=" + value );
+                        stringList.Add("<a  href=" + url + " ><span class='fa fa-edit' style='font-size:18px'></span></a>");
+                    }
+                    else if(i>1)
+                    {
+                        stringList.Add(p.Value.ToString());
+                    }
+                    
+                    i++;
+                }
+
+                stringListArr.Add(stringList.ToArray());
+            }
+
+            string[][] arrList = stringListArr.ToArray();
+            
+           return Json(new
+            {
+                sEcho = param.sEcho,
+                iTotalRecords = Convert.ToInt32(totalCount),
+                iTotalDisplayRecords = Convert.ToInt32(displayCount),
+                aaData = arrList
+            },
+                       JsonRequestBehavior.AllowGet);
+        }
+
+        public DataSet GetDataList(int MenuId, string searchText, int iDisplayStart, int iDisplayLength,int sortColumnIndex,string sortColumnDir, ref string totalCount, ref string displayCount, ref string detailPageName)
+        {
+            DataSet dsMenu = new DataSet();
+            DataSet dsList = new DataSet();
+            DataSet dsListWithSearchText = new DataSet();
+            DataSet dsListCount = new DataSet();
+
+            dsMenu = BaseDB.DBManager.AppConnection.GetDataSet("select * from gnl_menu where menu_id=@menu_id ", new ArrayList { "menu_id" }, new ArrayList { MenuId });
+            
+            string object_name = "";
+            string displayCountWithSearchText ="0";
+
+            if (dsMenu.Tables.Count > 0 && dsMenu.Tables[0].Rows.Count > 0)
+            {
+                ViewBag.ListName = dsMenu.Tables[0].Rows[0]["name"].ToString();
+                ViewBag.DetailPageName = dsMenu.Tables[0].Rows[0]["detail_page_url"].ToString();
+                ViewBag.PrimaryKey = dsMenu.Tables[0].Rows[0]["primary_key"].ToString();
+                ViewBag.HideColumns = dsMenu.Tables[0].Rows[0]["hide_columns"].ToString();
+                ViewBag.MenuId = MenuId;
+
+                detailPageName = ViewBag.DetailPageName;
+
+                object_name = dsMenu.Tables[0].Rows[0]["object_name"] != System.DBNull.Value ? dsMenu.Tables[0].Rows[0]["object_name"].ToString() : dsMenu.Tables[0].Rows[0]["table_name"].ToString();
+
+                string columns = dsMenu.Tables[0].Rows[0]["show_columns"] != System.DBNull.Value ? dsMenu.Tables[0].Rows[0]["primary_key"].ToString() + "," + dsMenu.Tables[0].Rows[0]["show_columns"].ToString() : " * ";
+
+                string searchColumns = dsMenu.Tables[0].Rows[0]["show_columns"] != System.DBNull.Value ? dsMenu.Tables[0].Rows[0]["show_columns"].ToString() : "";
+                
+                string searchFilter="";
+
+                if (!string.IsNullOrEmpty(searchText))
+                {
+                    string[] arrClmn = searchColumns.Split(',');
+                    int i=0;
+                    foreach (string clmn in arrClmn)
+                    {
+                        if (i == 0)
+                            searchFilter += " ( ";
+
+                        if (i == (arrClmn.Length - 1))
+                            searchFilter += clmn + " like '%" + searchText + "%' ) ";
+                        else
+                            searchFilter += clmn + " like '%" + searchText + "%' or ";
+                        i++;
+                    }
+                }
+
+                string order_by = (dsMenu.Tables[0].Rows[0]["order_by"] != System.DBNull.Value && dsMenu.Tables[0].Rows[0]["order_by"].ToString() != "") ? " order by " + dsMenu.Tables[0].Rows[0]["order_by"].ToString() : " order by  " + ViewBag.PrimaryKey;
+
+                string[] arrClmnSort = searchColumns.Split(',');
+
+                int j = 0;
+                foreach (string clmn in arrClmnSort)
+                {
+                    if ((sortColumnIndex -1) == j)
+                    {
+                        order_by = (dsMenu.Tables[0].Rows[0]["order_by"] != System.DBNull.Value && dsMenu.Tables[0].Rows[0]["order_by"].ToString()!="") ? " order by " + clmn + " " + sortColumnDir : " order by  " + clmn + " " + sortColumnDir;
+                    }
+                    j++;
+                }
+
+                string selectStringByRowNumber = " where (intRow>" + iDisplayStart + " and intRow<=" + (iDisplayStart + iDisplayLength) + ")";
+
+                string filter = dsMenu.Tables[0].Rows[0]["filter"] != System.DBNull.Value ? " and " + dsMenu.Tables[0].Rows[0]["filter"].ToString() + " " + searchFilter : (searchFilter.Trim() != "" ? " and " + searchFilter : " ");
+
+                dsList = BaseDB.DBManager.AppConnection.GetDataSet("select * from (select ROW_NUMBER() OVER (" + order_by + ") AS intRow , " + columns + " from " + object_name +" ) as table1 "+ selectStringByRowNumber+filter + order_by);
+
+                if (searchText != "")
+                {
+                    dsListWithSearchText = BaseDB.DBManager.AppConnection.GetDataSet("select * from (select ROW_NUMBER() OVER (" + order_by + ") AS intRow , " + columns + " from " + object_name + " ) as table1 where 1=1 " + filter + order_by);
+                    displayCountWithSearchText =  dsListWithSearchText.Tables[0].Rows.Count.ToString();
+                }
+
+                DataSet dsTotalCount = BaseDB.DBManager.AppConnection.GetDataSet("select count(*) from " + object_name);
+
+                totalCount = dsTotalCount.Tables[0].Rows[0][0].ToString();
+                displayCount = dsList.Tables[0].Rows.Count.ToString();
+
+                if (searchText == "")
+                {
+                    displayCount = totalCount;
+                }
+                else
+                {
+                    if (Convert.ToInt32(displayCount) < 10)
+                    {
+                        DataTable dt2 = dsListWithSearchText.Tables[0].Clone();
+                        DataRow[] results = dsListWithSearchText.Tables[0].Select("", "");
+
+                        int i = 0;
+                        foreach (var item in results)
+                        {
+                            if (i >= iDisplayStart && i<(iDisplayLength+iDisplayStart))
+                            {
+                                dt2.ImportRow(item);
+                            }
+                            i++;
+                        }
+
+                        DataSet newList = new DataSet();
+                        dsList.Clear();
+                        dsList.Merge(dt2);
+                        
+                    }
+                    
+                    displayCount = displayCountWithSearchText;
+                }
+            }
+
+            return dsList;
+        }
+    }
+}

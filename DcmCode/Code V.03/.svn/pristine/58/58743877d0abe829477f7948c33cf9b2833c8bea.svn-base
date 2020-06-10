@@ -1,0 +1,241 @@
+﻿@model Dcm.Models.Project
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    ViewBag.Title = "Projeler";
+}
+
+<link rel='stylesheet' type='text/css' href='~/assets/plugins/datatables/dataTables.css' />
+<link rel='stylesheet' type='text/css' href='~/assets/plugins/codeprettifier/prettify.css' />
+<link rel='stylesheet' type='text/css' href='~/assets/plugins/form-toggle/toggles.css' />
+@using (Html.BeginForm("Projects", "Crm", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data", data_validate = "parsley", novalidate = "", id = "validate-form" }))
+{
+    <input type="hidden" name="RecordId" id="RecordId" value="@Model.RecordId" />
+    <input type="hidden" name="MenuId" id="MenuId" value="@Model.MenuId" />
+    <div id='wrap'>
+        <div id="page-heading" style="
+    margin-top: -15px;
+">
+
+            <h3>Proje Bilgileri</h3>
+
+            <div class="options">
+                <div class="btn-toolbar">
+                    <a href="@(Url.Action("ListPage", "General") + "?MenuId=" + Dcm.Source.GlobalHelper.Encrypt(Model.MenuId))" class="btn btn-default"><i class="fa fa-list"></i><span style="padding-left:10px">Listeye Dön</span></a>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="container">
+            <div id="message_div" class="alert alert-info" style="display:none;vertical-align:top">
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary()
+                @ViewBag.ResultMessage
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h4>Detay</h4>
+
+                        </div>
+                        <div class="panel-body">
+
+                            <div class="form-group">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("project_name")</label>
+                                </div>
+
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <input type="text" class="form-control" name="project_name" required="required" id="project_name" value="@Model.project_name" autocomplete="off" placeholder="@Dcm.Source.GlobalHelper.GetGlobalResource("project_name")">
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <p><label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("project_type_name")</label></p>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    
+                                    <select class="form-control" style="width:100%" name="project_type_id" id="ddlProjectTypes" >
+
+                                        @foreach (var item in Model.projectTypes)
+                                        {
+                                            <option value="@item.project_type_id" @(Model.project_type_id == item.project_type_id.ToString() ? "selected" : "")>@item.project_type_name</option>
+                                        }
+                                    </select>
+
+                                    
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("project_owner")</label>
+                                </div>
+
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <select class="form-control" style="width: 100%; display: none" name="kurum_id" id="ddlKurumlar">
+                                        <option value="@Guid.Empty" @(Model.kurum_id == Guid.Empty.ToString() ? "selected" : "")>Seçiniz</option>
+                                        @foreach (var item in Model.activeKurumlar)
+                                        {
+                                            <option value="@item.kurum_id" @(Model.kurum_id == item.kurum_id.ToString() ? "selected" : "")>@item.kodu</option>
+                                        }
+                                    </select>
+
+                                    <select class="form-control" style="width:100%;" name="birey_id" id="ddlBireyler">
+                                        <option value="@Guid.Empty" @(Model.birey_id == Guid.Empty.ToString() ? "selected" : "")>Seçiniz</option>
+                                        @foreach (var item in Model.activeBireyler)
+                                        {
+                                            <option value="@item.birey_id" @(Model.birey_id == item.birey_id.ToString() ? "selected" : "")>@item.ad @item.soyad</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <p><label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("project_assigned_name_surname")</label></p>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <select class="form-control" style="width:100%" name="project_assigned_user_id" id="ddlUsers">
+                                        <option value="@Guid.Empty" @(Model.project_assigned_user_id == Guid.Empty.ToString() ? "selected" : "")>Seçiniz</option>
+                                        @foreach (var item in Model.activeUsers)
+                                        {
+                                            <option value="@item.user_id" @(Model.project_assigned_user_id == item.user_id.ToString() ? "selected" : "")>@item.name @item.surname</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("project_description")</label>
+                                </div>
+                                <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 form-validate">
+                                    <textarea name="project_description" id="project_description" required="required" cols="50" rows="4" class="form-control">@Model.project_description</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("note")</label>
+                                </div>
+                                <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 form-validate">
+                                    <textarea name="note" id="note" cols="50" rows="4" class="form-control">@Model.note</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 form-validate">
+                                    <label class="control-label">@Dcm.Source.GlobalHelper.GetGlobalResource("isactive")</label>
+                                </div>
+                                <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
+                                    <input type="checkbox" id="chk_is_active" name="chk_is_active">
+                                    <input type="hidden" id="is_active" name="is_active">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-sm-6 col-sm-offset-3">
+                                    <div class="btn-toolbar">
+                                        @if(Dcm.Source.GlobalHelper.IsAuthorized(Model.MenuId,"update_right",BaseDB.SessionContext.Current.ActiveUser.UserUid.ToString()))
+                                        {
+                                        <input type="submit" class="btn-primary btn" value="Kaydet" onclick="Update()" />
+                                        }
+
+                                        @if (Model.RecordId != "" && Model.RecordId != Guid.Empty.ToString() && Dcm.Source.GlobalHelper.IsAuthorized(Model.MenuId, "delete_right", BaseDB.SessionContext.Current.ActiveUser.UserUid.ToString()))
+                                        {
+                                        <input type="button" style="margin-left:50px" class="btn-danger btn" value="Sil" onclick="Delete()" />
+                                        }
+                                        @*<button class="btn-default btn">Cancel</button>*@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div><!-- container -->
+    </div>
+
+    <input type="hidden" id="FromDeleteButton" name="FromDeleteButton" />
+}
+
+<style>
+    .table-bordered > tbody > tr > td {
+        padding: 5px;
+        line-height: 1.428571429;
+        vertical-align: top;
+        border-top: 1px solid #e6e7e8;
+    }
+
+    #wrap > .container {
+        padding: 10px;
+    }
+
+    #wrap {
+        margin-top: 0px;
+    }
+</style>
+<script type='text/javascript' src='~/assets/plugins/datatables/jquery.dataTables.min.js'></script>
+<script type='text/javascript' src='~/assets/plugins/datatables/dataTables.bootstrap.js'></script>
+
+<script>
+    $(document).ready(function () {
+      
+
+        if ('@Model.is_active' == 'True' || '@Model.is_active' == 'true' || '@Model.is_active' == 'TRUE') {
+            $("#chk_is_active").prop('checked', true);
+        }
+
+        if ('@Model.project_type_id' == '1' ) {
+            $("#ddlBireyler").show();
+            $("#ddlKurumlar").hide();
+        }
+        else if ('@Model.project_type_id' == '2') {
+            $("#ddlBireyler").hide();
+            $("#ddlKurumlar").show();
+        }
+
+        $("#ddlProjectTypes").change(function () {
+            var type_id = this.value;
+
+            if (type_id == "1") {
+                $("#ddlBireyler").show();
+                $("#ddlKurumlar").hide();
+            }else if (type_id == "2") {
+                $("#ddlBireyler").hide();
+                $("#ddlKurumlar").show();
+            }
+        });
+
+    });
+
+    function Update() {
+        if ($("#chk_is_active").prop('checked') == true) {
+            $("#is_active").val("true");
+        }
+
+        var isValid = $('#validate-form').parsley().validate();
+
+        if (!isValid) {
+            $('#message_div').hide()
+        }
+
+    }
+
+    function Delete() {
+
+        bootbox.confirm('@Resources.GlobalResource.are_you_sure_to_delete', function (result) {
+            if (result) {
+                $("#FromDeleteButton").val("1");
+                $("#validate-form").parsley().destroy();
+                $("#validate-form").submit();
+            }
+        });
+        
+    }
+</script>

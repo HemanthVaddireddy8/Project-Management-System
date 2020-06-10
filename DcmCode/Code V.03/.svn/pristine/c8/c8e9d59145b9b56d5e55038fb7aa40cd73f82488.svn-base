@@ -1,0 +1,34 @@
+﻿using BaseDB;
+
+using System;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Script.Serialization;
+
+namespace Dcm.Filters
+{
+    public class SessionCheckAttribute : ActionFilterAttribute
+    {
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            var context = filterContext.HttpContext;
+            //string lang = System.Threading.Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+            //if (string.IsNullOrEmpty(lang))
+            //    lang = "tr";
+            //string redirectTo = "~/" + lang + "/Account/Login";
+            //string redirectToLogOut = "~/" + lang + "/Account/LogOff";
+
+            string redirectTo = "~/Account/Login";
+            
+            ///Kullanıcı Login değilse İşlem Post ise
+            
+            if (!context.Request.IsAjaxRequest() && SessionContext.IsSessionNull() )
+            {
+                filterContext.Result = new RedirectResult(redirectTo);
+            }
+            
+            base.OnActionExecuting(filterContext);
+        }
+    }
+}

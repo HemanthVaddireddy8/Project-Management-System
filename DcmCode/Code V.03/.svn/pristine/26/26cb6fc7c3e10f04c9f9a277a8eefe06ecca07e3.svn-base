@@ -1,0 +1,216 @@
+﻿using BaseDB;
+using Dcm.Filters;
+using Dcm.Models;
+using Dcm.Source;
+using Google.Apis.Drive.v2;
+using Google.Apis.Drive.v2.Data;
+using Gunluk.EntityModels;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Security;
+
+namespace Dcm.Controllers
+{
+    public class HomeController : Controller
+    {
+        [SessionCheckAttribute]
+        public ActionResult Index()
+        {
+            SessionContext.Current.ActiveUser.MenuId = "0";
+            return View();
+        }
+
+        public PartialViewResult MenuPartial()
+        {
+            var model = GetData();
+            return PartialView("_MenuPartial", model);
+        }
+
+        public PartialViewResult MenuPartialMini()
+        {
+            var model = GetDataMini();
+            return PartialView("_MenuPartialMini", model);
+        }
+
+        private Tree GetData()
+        {
+            var tree = new Tree();
+
+            using (var db = new Dcm.EntityModels.GenelEntities())
+            {
+                // Add each element as a tree node
+                tree.Nodes = db.gnl_menu
+                    .Where(t => t.show_in_menu == 1 || t.show_in_menu == null)
+                    .Select(t => new TreeNode { MenuId = t.menu_id, ParentMenuId = t.parent_menu_id.Value, Name = t.name, MenuOrder = t.menu_order.Value, PrimaryKey = t.primary_key, TableName = t.table_name, ObjectName = t.object_name, OnlyDetailPage = t.only_detail_page, DetailPageUrl=t.detail_page_url, IconClass =t.icon_class})
+                    .ToDictionary(t => t.MenuId);
+
+                // Create a new root node
+                tree.RootNode = new TreeNode { MenuId = 0, Name = "Root" };
+
+                // Build the tree, setting parent and children references for all elements
+                tree.BuildTree();
+            }
+
+            return tree;
+        }
+
+        private TreeMini GetDataMini()
+        {
+            var tree = new TreeMini();
+
+            using (var db = new Dcm.EntityModels.GenelEntities())
+            {
+                // Add each element as a tree node
+                tree.Nodes = db.gnl_menu
+                    .Where(t => t.show_in_menu == 1 || t.show_in_menu == null)
+                    .Select(t => new TreeNodeMini { MenuId = t.menu_id, ParentMenuId = t.parent_menu_id.Value, Name = t.name, MenuOrder = t.menu_order.Value, PrimaryKey = t.primary_key, TableName = t.table_name, ObjectName = t.object_name, OnlyDetailPage = t.only_detail_page, DetailPageUrl = t.detail_page_url, IconClass = t.icon_class })
+                    .ToDictionary(t => t.MenuId);
+
+                // Create a new root node
+                tree.RootNode = new TreeNodeMini { MenuId = 0, Name = "Root" };
+
+                // Build the tree, setting parent and children references for all elements
+                tree.BuildTreeMini();
+            }
+
+            return tree;
+        }
+
+        public ActionResult SetCookie()
+        {
+            bool result = false;
+            if (BaseDB.SessionContext.Current == null || BaseDB.SessionContext.Current.ActiveUser == null)
+            {
+                HttpCookie ck = System.Web.HttpContext.Current.Request.Cookies["DCMGRUP23"];
+
+                if (ck != null)
+                {
+                    try
+                    {
+                        BaseClasses.BaseLogin objLogin = new BaseClasses.BaseLogin();
+                        FormsAuthenticationTicket oldTicket = FormsAuthentication.Decrypt(ck.Value);
+                        result = objLogin.LoginFromRememberMe(oldTicket.Name);
+
+                    }
+                    catch (Exception exp)
+                    {
+
+                    }
+                }
+
+            }
+
+            return Content(result.ToString(), "text/html"); ;
+
+
+        }
+
+        public JsonResult GetNotificationCount(string userId)
+        {
+            GenelRepository gnlDB = RepositoryManager.GetRepository<GenelRepository>();
+            int count = 0;
+            if (GlobalHelper.IsGuid(userId))
+            {
+                var list = gnlDB.GetActiveNotificationByUser(Guid.Parse(userId));
+
+                if (list != null && list.Count > 0)
+                {
+                    count = list.Count;
+                }
+            }
+         
+            var modelNotification = new {
+                count = count
+            };
+
+            return Json(modelNotification, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [SessionCheckAttribute]
+        public PartialViewResult NotificationList(string userId)
+        {
+            GenelRepository gnlDB = RepositoryManager.GetRepository<GenelRepository>();
+            if (GlobalHelper.IsGuid(userId))
+            {
+                var list = gnlDB.GetActiveNotificationByUser(Guid.Parse(userId));
+                Session["ListNotification"] = list;
+
+            }
+
+            return PartialView("NotificationList");
+        }
+
+        public JsonResult GetAllTaskStatusChartData()
+        {
+            TaskRepository tskDB = RepositoryManager.GetRepository<TaskRepository>();
+            Index model = new Index();
+
+            DataSet dsChart1 = tskDB.GetAllTaskChartData();
+            model.allTaskStatusChartSourceData = new List<AllTaskStatusChartSourceData>();
+
+            int counter = 0;
+            foreach (DataRow dr in dsChart1.Tables[0].Rows)
+            {
+                AllTaskStatusChartSourceData item = new AllTaskStatusChartSourceData();
+                item.label = dr["task_status_name"].ToString();
+                item.value = Convert.ToInt32(dr["statu_count"].ToString());
+                model.allTaskStatusChartSourceData.Add(item);
+                counter++;
+            }
+
+            return Json(model.allTaskStatusChartSourceData, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetMyAssignedTaskStatusChartData()
+        {
+            TaskRepository tskDB = RepositoryManager.GetRepository<TaskRepository>();
+            Index model = new Index();
+
+            DataSet dsChart1 = tskDB.GetMyAssignedTaskChartData();
+
+            model.myAssignedTaskStatusChartSourceData = new List<MyAssignedTaskStatusChartSourceData>();
+            
+            int counter = 0;
+            foreach (DataRow dr in dsChart1.Tables[0].Rows)
+            {
+                MyAssignedTaskStatusChartSourceData item = new MyAssignedTaskStatusChartSourceData();
+                item.label = dr["task_status_name"].ToString();
+                item.value = Convert.ToInt32(dr["statu_count"].ToString());
+                model.myAssignedTaskStatusChartSourceData.Add(item);
+                counter++;
+            }
+
+            return Json(model.myAssignedTaskStatusChartSourceData, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetMyTaskStatusChartData()
+        {
+            TaskRepository tskDB = RepositoryManager.GetRepository<TaskRepository>();
+            Index model = new Index();
+
+            DataSet dsChart1 = tskDB.GetMyTaskChartData();
+
+            model.myTaskStatusChartSourceData = new List<MyTaskStatusChartSourceData>();
+
+            int counter = 0;
+            foreach (DataRow dr in dsChart1.Tables[0].Rows)
+            {
+                MyTaskStatusChartSourceData item = new MyTaskStatusChartSourceData();
+                item.label = dr["task_status_name"].ToString();
+                item.value = Convert.ToInt32(dr["statu_count"].ToString());
+                model.myTaskStatusChartSourceData.Add(item);
+                counter++;
+            }
+
+            return Json(model.myTaskStatusChartSourceData, JsonRequestBehavior.AllowGet);
+        }
+
+        
+
+    }
+}

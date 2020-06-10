@@ -1,0 +1,16 @@
+﻿@model Dcm.Models.Tree
+
+
+@foreach (var node in Model.RootNode.Children)
+{
+    if(node.ParentMenuId==0)
+    { 
+        <li><a href="@node.ObjectName" style="cursor:pointer"><i class="fa @node.IconClass"></i> <span>@node.Name</span></a>@Html.DisplayFor(x => node)</li>
+    }
+    else
+    { 
+    <ul class="acc-menu" >
+        <li><a href="@node.ObjectName" style="cursor:pointer"><i class="fa @node.IconClass"></i> <span>@node.Name</span></a>@Html.DisplayFor(x => node)</li>
+    </ul>
+    }
+}

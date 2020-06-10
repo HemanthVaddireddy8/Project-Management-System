@@ -1,0 +1,182 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Data;
+using System.Collections;
+using System.Globalization;
+using Dcm.EntityModels;
+using Dcm.Models;
+using BaseDB;
+
+namespace Gunluk.EntityModels
+{
+    public class GenelRepository : BaseDB.BaseRepository<Dcm.EntityModels.GenelEntities>
+    {
+
+        #region Kullanıcı İşlemleri
+        public gnl_users GetUser(Guid user_uid)
+        {
+            return db.gnl_users.SingleOrDefault(d => d.user_id == user_uid);
+        }
+
+        public gnl_users GetUserByEmail(string email)
+        {
+            return db.gnl_users.SingleOrDefault(d => d.email == email);
+        }
+
+        public void AddUser(gnl_users user,User model)
+        {
+            user.user_id = Guid.NewGuid();
+            user.name = model.name;
+            user.surname = model.surname;
+            user.email = model.email;
+
+            if (!string.IsNullOrEmpty(model.password))
+                user.password = model.password;
+
+            user.mobile_phone = model.mobile_phone;
+            user.home_phone = model.home_phone;
+            user.identity_number = model.identity_number;
+
+            if (model.birth_date != null && model.birth_date != DateTime.MinValue && model.birth_date.ToString() != "")
+                user.birth_date = Convert.ToDateTime(model.birth_date);
+
+            if (model.end_date != null && model.end_date != DateTime.MinValue && model.end_date.ToString() != "")
+                user.end_date = Convert.ToDateTime(model.end_date);
+
+            if (model.start_date != null && model.start_date != DateTime.MinValue && model.start_date.ToString() != "")
+                user.start_date = Convert.ToDateTime(model.start_date);
+
+            user.adress = model.address;
+            user.note = model.note;
+            user.is_active = model.is_active;
+            db.gnl_users.Add(user);
+            this.Kaydet();
+        }
+
+        public User BindUser(User model, Guid recordId)
+        {
+            gnl_users user = new gnl_users();
+            user = this.GetUser(recordId);
+
+            model.name = user.name;
+            model.surname = user.surname;
+            model.email = user.email;
+            model.address = user.adress;
+            model.mobile_phone = user.mobile_phone;
+            model.home_phone = user.home_phone;
+
+            model.identity_number = user.identity_number;
+            model.is_active = user.is_active.Value;
+            
+            if (user.birth_date != null)
+                model.birth_date = user.birth_date.Value;
+            else
+                model.birth_date = DateTime.MinValue;
+
+            if (user.end_date != null)
+                model.end_date = user.end_date.Value;
+            else
+                model.end_date = DateTime.MinValue;
+
+            if (user.start_date != null)
+                model.start_date = user.start_date.Value;
+            else
+                model.start_date = DateTime.MinValue;
+
+            model.note = user.note;
+
+            return model;
+        }
+
+        public User UpdateUser(User model, Guid recordId)
+        {
+            gnl_users user = new gnl_users();
+            user = this.GetUser(recordId);
+
+            user.name = model.name;
+            user.surname = model.surname;
+            user.email = model.email;
+            user.adress = model.address;
+            user.mobile_phone = model.mobile_phone;
+            user.home_phone = model.home_phone;
+            
+            if(!string.IsNullOrEmpty(model.password))
+                user.password = model.password;
+
+            user.identity_number = model.identity_number;
+            user.is_active = model.is_active;
+
+            if (model.birth_date != null && model.birth_date != DateTime.MinValue && model.birth_date.ToString() != "")
+                user.birth_date = model.birth_date;
+
+
+            if (model.end_date != null && model.end_date!=DateTime.MinValue  && model.end_date.ToString() != "")
+                user.end_date = model.end_date;
+
+            if (model.start_date != null && model.start_date != DateTime.MinValue && model.start_date.ToString() != "")
+                user.start_date = model.start_date;
+
+            user.note = model.note;
+
+            user.updated_at = DateTime.UtcNow;
+            user.updated_by = SessionContext.Current.ActiveUser.UserUid;
+
+            this.Kaydet();
+            return model;
+        }
+
+        
+        //public gnl_kullanicilar KullaniciGetirEmaileGore(string email)
+        //{
+        //    return db.gnl_kullanicilar.SingleOrDefault(d => d.email == email);
+        //}
+
+        //public gnl_kullanicilar KullaniciGetirEmaileGoreSignUpped(string email)
+        //{
+        //    return db.gnl_kullanicilar.SingleOrDefault(d => d.email == email && d.is_sign_up==true);
+        //}
+
+        //public gnl_kullanicilar KullaniciGetirUsernameGoreSignUpped(string username)
+        //{
+        //    return db.gnl_kullanicilar.SingleOrDefault(d => d.user_name == username.Trim() && d.is_sign_up == true);
+        //}
+
+        //public void KullaniciEkle(gnl_kullanicilar kullanici)
+        //{
+        //    kullanici.user_uid = Guid.NewGuid();
+        //    HttpBrowserCapabilities bc = HttpContext.Current.Request.Browser;
+
+        //    kullanici.host_name = HttpContext.Current.Request.UserHostName;
+        //    kullanici.host_address = HttpContext.Current.Request.UserHostAddress;
+        //    kullanici.browser = bc.Browser;
+        //    kullanici.platform = bc.Platform;
+        //    kullanici.version = bc.Version;
+        //    kullanici.is_mobile_device = bc.IsMobileDevice;
+
+        //    db.gnl_kullanicilar.Add(kullanici);
+
+        //}
+
+        //public void AddUserImage(gnl_kullanicilar_image image)
+        //{
+        //    image.uid = Guid.NewGuid();
+        //    image.date = DateTime.UtcNow;
+        //    db.gnl_kullanicilar_image.Add(image);
+
+        //}
+
+        //public gnl_kullanicilar_image GetUserImage(Guid uid)
+        //{
+        //    return db.gnl_kullanicilar_image.SingleOrDefault(d => d.uid == uid);
+        //}
+        #endregion
+
+        #region Şifre Sıfırlama
+      
+
+        #endregion
+
+    }
+}

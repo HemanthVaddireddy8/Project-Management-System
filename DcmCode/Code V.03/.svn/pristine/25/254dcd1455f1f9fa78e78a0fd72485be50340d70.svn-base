@@ -1,0 +1,11 @@
+﻿@model Dcm.Models.TreeNode
+
+@if (Model.Children.Count > 0)
+{
+    <ul class="acc-menu">
+        @foreach (var node in Model.Children)
+        {
+            <li><a href="@node.ObjectName"><span>@node.Name</span></a></li>
+        }
+    </ul>
+}

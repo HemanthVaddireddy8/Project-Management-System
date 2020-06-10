@@ -1,0 +1,107 @@
+﻿using BaseDB;
+using Dcm.Source;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Http;
+using System.Web.Mvc;
+using System.Web.Optimization;
+using System.Web.Routing;
+using System.Web.Security;
+
+namespace Dcm
+{
+    public class MvcApplication : System.Web.HttpApplication
+    {
+        protected void Application_Start()
+        {
+            AreaRegistration.RegisterAllAreas();
+            GlobalConfiguration.Configure(WebApiConfig.Register);
+            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
+            BundleConfig.RegisterBundles(BundleTable.Bundles);
+        }
+
+        void Application_End(object sender, EventArgs e)
+        {
+            //  Code that runs on application shutdown
+
+            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(System.AppDomain.CurrentDomain.BaseDirectory + "Temp");
+            foreach (System.IO.DirectoryInfo subFolder in di.GetDirectories())
+            {
+                try
+                {
+                    ClearDirectory(subFolder);
+                    subFolder.Delete();
+                }
+                catch { }
+            }
+            ClearDirectory(di);
+
+        }
+
+        protected void Application_EndRequest(object sender, EventArgs e)
+        {
+            Dictionary<object, object> secilenler = new Dictionary<object, object>();
+
+            foreach (System.Collections.DictionaryEntry item in Context.Items)
+            {
+                if (item.Value is BaseDB.IDbConnection || item.Value is IRepository)
+                {
+                    System.Diagnostics.Debug.WriteLine("Disposing:" + item.Key.ToString());
+                    ((IDisposable)item.Value).Dispose();
+                    secilenler.Add(item.Key, item.Value);
+                }
+                else
+                    System.Diagnostics.Debug.WriteLine("Not Touching:" + item.Key.ToString());
+            }
+            foreach (var item in secilenler)
+                Context.Items[item.Key] = null;
+        }
+
+        void Application_Error(object sender, EventArgs e)
+        {
+            // Code that runs when an unhandled error occurs
+
+            Exception ex = Server.GetLastError();
+
+            if (ex is HttpRequestValidationException)
+            {
+                Response.Redirect("~/Home/ErrorValidation");
+            }
+
+            if (GlobalHelper.IsMaxRequestExceededException(this.Server.GetLastError()))
+            {
+                Response.Redirect("~/Home/Error");
+            }
+
+
+        }
+        void Session_End(object sender, EventArgs e)
+        {
+            // Code that runs when a session ends. 
+            // Note: The Session_End event is raised only when the sessionstate mode
+            // is set to InProc in the Web.config file. If session mode is set to StateServer 
+            // or SQLServer, the event is not raised.
+
+            if (HttpContext.Current != null && HttpContext.Current.User != null)
+            {
+                FormsAuthentication.SignOut();
+            }
+
+        }
+
+        private void ClearDirectory(System.IO.DirectoryInfo di)
+        {
+            foreach (System.IO.FileInfo fi in di.GetFiles())
+            {
+                try
+                {
+                    fi.Delete();
+                }
+                catch { }
+            }
+        }
+    }
+}

@@ -1,0 +1,17 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Dcm.Models
+{
+    public class Login
+    {
+        [Required(ErrorMessage = "E-Posta alanı zorunludur.")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "Şifre alanı zorunludur.")]
+        public string Password { get; set; }
+
+        public bool RememberMe { get; set; }
+
+    }
+
+}

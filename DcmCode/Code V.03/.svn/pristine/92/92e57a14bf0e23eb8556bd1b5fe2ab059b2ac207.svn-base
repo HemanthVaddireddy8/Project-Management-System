@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="d4d50050be0a452a909f4f3d9b8d6ec3" Name="Diagram1" ZoomLevel="78">
+        <EntityTypeShape EntityType="GenelModel.gnl_menu" Width="1.5" PointX="9" PointY="2.625" />
+        <EntityTypeShape EntityType="GenelModel.gnl_roles_related_users" Width="1.5" PointX="1" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="GenelModel.gnl_role_related_users_v" Width="1.5" PointX="1.125" PointY="4.625" />
+        <EntityTypeShape EntityType="GenelModel.gnl_role_rights" Width="1.5" PointX="3.375" PointY="4.75" />
+        <EntityTypeShape EntityType="GenelModel.gnl_roles" Width="1.5" PointX="3.375" PointY="0.75" />
+        <EntityTypeShape EntityType="GenelModel.gnl_logged_in_users" Width="1.5" PointX="0.75" PointY="7.75" />
+        <EntityTypeShape EntityType="GenelModel.gnl_user_groups" Width="1.5" PointX="5.375" PointY="7.75" />
+        <EntityTypeShape EntityType="GenelModel.gnl_users" Width="1.5" PointX="7.375" PointY="8.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

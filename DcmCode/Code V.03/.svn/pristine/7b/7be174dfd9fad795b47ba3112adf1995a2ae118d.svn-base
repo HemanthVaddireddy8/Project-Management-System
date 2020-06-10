@@ -1,0 +1,27 @@
+﻿@model Dcm.Models.TreeNodeMini
+
+@if (Model.Children.Count > 0)
+{
+    <ul class="acc-menu">
+        @foreach (var node in Model.Children)
+        {
+            <li id="@node.MenuId"><a style="color:black;text-decoration:underline" href="#"><span>@node.Name</span></a></li>
+            <li style="list-style:none">
+                <ul id="ul_text">
+                    <li style="list-style: none; color: #E73C3C"><input id="Show_@node.MenuId" name="Show_@node.MenuId" type="checkbox" @(Dcm.Source.GlobalHelper.IsAuthorizedByRole(node.MenuId.ToString(), "menu_right", BaseDB.SessionContext.Current.ActiveUser.SelectedRoleId) ? "checked" : "") />Göster</li>
+                    <li style="list-style: none; color: #E73C3C"><input id="Update_@node.MenuId" name="Update_@node.MenuId" type="checkbox" @(Dcm.Source.GlobalHelper.IsAuthorizedByRole(node.MenuId.ToString(), "update_right", BaseDB.SessionContext.Current.ActiveUser.SelectedRoleId) ? "checked" : "") />Güncelle</li>
+                    <li style="list-style: none; color: #E73C3C"><input id="Delete_@node.MenuId" name="Delete_@node.MenuId" type="checkbox" @(Dcm.Source.GlobalHelper.IsAuthorizedByRole(node.MenuId.ToString(), "delete_right", BaseDB.SessionContext.Current.ActiveUser.SelectedRoleId) ? "checked" : "") />Sil</li>
+                    <li style="list-style: none; color: #E73C3C"><input id="Report_@node.MenuId" name="Report_@node.MenuId" type="checkbox" @(Dcm.Source.GlobalHelper.IsAuthorizedByRole(node.MenuId.ToString(), "report_right", BaseDB.SessionContext.Current.ActiveUser.SelectedRoleId) ? "checked" : "") />Raporla</li>
+                </ul>
+            </li>
+
+        }
+    </ul>
+}
+
+<style>
+    #ul_text li {
+        border-right: 10px solid #ffffff;
+        display: inline;
+    }
+</style>

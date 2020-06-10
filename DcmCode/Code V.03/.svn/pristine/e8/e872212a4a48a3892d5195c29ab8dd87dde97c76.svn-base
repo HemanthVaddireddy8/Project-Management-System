@@ -1,0 +1,80 @@
+﻿@model Dcm.Models.CalendarList
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    ViewBag.Title = "Takvim";
+}
+
+<div style="margin-top:-10px">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-danger calendar">
+                <div class="panel-heading">
+                    @Html.AntiForgeryToken()
+                    <h4>Takvim</h4>
+                    <div class="options">
+
+                    </div>
+                </div>
+                <div class="panel-body">
+                    
+                    <div id='calendar-drag'></div>
+                </div>
+            </div>
+        </div>
+
+
+        
+
+
+
+    </div>
+</div>
+
+
+<script>
+    //<![CDATA[
+    $(document).ready(function () {
+        var event = '@(Html.Raw(Model.CalendarHiddenData))';
+        var jsonObj = $.parseJSON( event );
+        $('#calendar-drag').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            lang: 'tr',
+            selectable: true,
+            selectHelper: true,
+            editable: false,
+            monthNames: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"],
+            monthNamesShort: ["Ock", "Şbt", "Mar", "Nis", "May", "Haz", "tem", "Ağu", "Eyl", "Ekm", "Ksm", "Arl"],
+            dayNames: ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"],
+            dayNamesShort: ["Pzr", "Pts", "Sal", "Çar", "Per", "Cum", "Cmt"],
+            events: jsonObj,
+            buttonText: {
+                prev: '<i class="fa fa-angle-left"></i>',
+                next: '<i class="fa fa-angle-right"></i>',
+                prevYear: '<i class="fa fa-angle-double-left"></i>',  // <<
+                nextYear: '<i class="fa fa-angle-double-right"></i>',  // >>
+                today: 'Bugün',
+                month: 'Aylık',
+                week: 'Haftalık',
+                day: 'Günlük'
+            }
+
+        });
+
+
+
+
+
+        });
+
+    //]]>
+</script>
+
+
